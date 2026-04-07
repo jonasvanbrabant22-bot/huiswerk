@@ -28,39 +28,38 @@
 
         .app-container { max-width: 430px; margin: 0 auto; padding: env(safe-area-inset-top) 16px 40px; }
         .header { text-align: center; margin: 20px 0; }
-        .app-icon { width: 85px; height: 85px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 10px; object-fit: cover; }
+        .app-icon { width: 85px; height: 85px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 10px; object-fit: cover; }
         h1 { font-size: 26px; font-weight: 700; margin: 0; }
 
         .group-label { font-size: 13px; color: var(--ios-secondary); text-transform: uppercase; margin: 20px 0 8px 16px; }
-        .ios-list { background: var(--ios-card); border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .ios-list { background: var(--ios-card); border-radius: 10px; overflow: hidden; margin-bottom: 15px; border: 0.5px solid var(--ios-sep); }
         .ios-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; min-height: 44px; border-bottom: 0.5px solid var(--ios-sep); }
         .ios-row:last-child { border-bottom: none; }
         
-        input[type="number"], select { border: none; background: #E9E9EB; padding: 7px 10px; border-radius: 8px; font-size: 16px; text-align: right; }
+        input[type="number"], select, input[type="text"] { border: none; background: #EFEEF0; padding: 7px 10px; border-radius: 8px; font-size: 16px; text-align: right; outline: none; }
         input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--ios-blue); }
 
-        .btn-main { background: var(--ios-blue); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 600; margin-top: 20px; }
+        .btn-main { background: var(--ios-blue); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 600; margin-top: 20px; cursor: pointer; }
         .btn-success { background: #34C759; }
 
         /* --- WERKBLAD LAYOUT --- */
         #werkblad { display: none; background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; font-family: 'Comic Sans MS', cursive; }
         .wb-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 15px; font-size: 14px; }
-        .section { margin-bottom: 15px; border: 1px solid #eee; padding: 10px; border-radius: 10px; }
-        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 8px; color: #007AFF; }
+        .section { margin-bottom: 15px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: #fff; }
+        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 8px; color: #007AFF; border-bottom: 1px solid #eee; padding-bottom: 4px; }
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 19px; }
 
-        /* VRIENDJE VAN / BRUG OEFENING */
+        /* BRUG OEFENING */
         .brug-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .brug-item { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 10px; }
-        .brug-som { margin-bottom: 5px; }
-        .brug-splits { margin-left: 25px; display: flex; flex-direction: column; align-items: center; }
-        .brug-benen { width: 35px; height: 15px; border-top: 2px solid #000; position: relative; margin-top: 2px; }
-        .brug-benen::before { content:''; position:absolute; left:0; height:15px; border-left:2px solid #000; transform: skewX(-25deg); }
-        .brug-benen::after { content:''; position:absolute; right:0; height:15px; border-right:2px solid #000; transform: skewX(25deg); }
-        .brug-input { display: flex; justify-content: space-between; width: 55px; margin-top: 2px; font-size: 14px; }
-        .mini-box { border-bottom: 1px solid #000; width: 22px; height: 18px; text-align: center; }
+        .brug-benen { width: 35px; height: 15px; border-top: 2px solid #000; position: relative; margin: 4px 0 0 25px; }
+        .brug-benen::before, .brug-benen::after { content:''; position:absolute; height:15px; border-left:2px solid #000; top:0; }
+        .brug-benen::before { left:0; transform: skewX(-25deg); }
+        .brug-benen::after { right:0; transform: skewX(25deg); }
+        .brug-boxes { display: flex; justify-content: space-between; width: 55px; margin-left: 15px; }
+        .mini-box { border-bottom: 1.5px solid #000; width: 22px; height: 20px; text-align: center; }
 
-        @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; width: 100%; } }
+        @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; width: 100%; padding: 10mm; } }
     </style>
 </head>
 <body>
@@ -68,7 +67,7 @@
 <div class="app-container no-print">
     <div id="step1" class="slide active">
         <div class="header">
-            <img src="huiswerk.jpeg" alt="App Logo" class="app-icon">
+            <img src="huiswerk.jpeg" alt="Logo" class="app-icon">
             <h1>Huiswerk Maker</h1>
         </div>
         <div class="ios-list">
@@ -86,7 +85,7 @@
         <div class="ios-list">
             <div class="ios-row">
                 <label>Getalbereik</label>
-                <select id="range">
+                <select id="range" onchange="checkRange()">
                     <option value="10">0 - 10</option>
                     <option value="20" selected>0 - 20</option>
                     <option value="100">0 - 100</option>
@@ -96,20 +95,22 @@
 
         <p class="group-label">Oefeningen</p>
         <div class="ios-list">
-            <div class="ios-row">
-                <label>Vriendje van (Brug over 10)</label>
-                <input type="checkbox" id="checkBrug" onchange="toggle('brBox')">
-            </div>
-            <div id="brBox" style="display:none; background:#F9F9F9">
-                <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numBrug" value="6"></div>
+            <div id="brugOption">
+                <div class="ios-row">
+                    <label>Vriendje van (Brug)</label>
+                    <input type="checkbox" id="checkBrug" onchange="toggle('brBox')">
+                </div>
+                <div id="brBox" style="display:none; background:#F9F9F9">
+                    <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numBrug" value="6"></div>
+                </div>
             </div>
 
             <div class="ios-row">
-                <label>Basis sommen (+ / -)</label>
+                <label>Plus / Min sommen</label>
                 <input type="checkbox" id="checkPM" onchange="toggle('pmBox')">
             </div>
             <div id="pmBox" style="display:none; background:#F9F9F9">
-                <div class="ios-row" style="padding-left:32px"><span>Aantal sommen</span><input type="number" id="numPM" value="12"></div>
+                <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numPM" value="12"></div>
             </div>
 
             <div class="ios-row">
@@ -118,17 +119,18 @@
             </div>
             <div id="spBox" style="display:none; background:#F9F9F9">
                 <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numSplits" value="6"></div>
+                <div class="ios-row" style="padding-left:32px"><span>Vast getal?</span><input type="text" id="splitNumbers" placeholder="vb: 10"></div>
             </div>
         </div>
 
-        <button class="btn-main btn-success" onclick="generate()">Genereer PDF / Print</button>
+        <button class="btn-main btn-success" onclick="generate()">Genereer Werkblad ✨</button>
         <button class="btn-main" style="background:#E5E5EA; color:#007AFF" onclick="nextStep(1)">Terug</button>
     </div>
 </div>
 
 <div id="werkblad">
     <div class="wb-header">
-        <span style="font-weight:bold; font-size:18px;">Mijn Rekenblad 🌟</span>
+        <span style="font-weight:bold; font-size:18px;">Mijn Werkblad 🌟</span>
         <span>Naam: __________________ Datum: ___/___</span>
     </div>
     <div id="inhoud"></div>
@@ -143,7 +145,17 @@
         document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
         document.getElementById('step'+n).style.display = 'block';
     }
-    function toggle(id) { document.getElementById(id).style.display = document.getElementById(id).style.display === 'none' ? 'block' : 'none'; }
+
+    function toggle(id) { 
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none'; 
+    }
+
+    function checkRange() {
+        const r = document.getElementById('range').value;
+        document.getElementById('brugOption').style.display = (r === "10") ? 'none' : 'block';
+    }
+
     function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
     function generate() {
@@ -153,37 +165,34 @@
         const inhoud = document.getElementById('inhoud');
         inhoud.innerHTML = '';
 
-        // 1. VRIENDJE VAN (DE BRUG)
-        if(document.getElementById('checkBrug').checked) {
-            let html = `<div class="section"><div class="section-title">Vriendje van: Maak de brug over 10</div><div class="brug-grid">`;
+        // 1. VRIENDJE VAN (De Brug)
+        if(document.getElementById('checkBrug').checked && range > 10) {
+            let html = `<div class="section"><div class="section-title">De Brug: Maak eerst 10</div><div class="brug-grid">`;
             let n = parseInt(document.getElementById('numBrug').value);
             for(let i=0; i<n; i++) {
-                let a = getRandom(6, 9); // Altijd een getal dat bijna 10 is
-                let b = getRandom(2, 9);
-                while(a + b <= 10) { b = getRandom(4, 9); } // Zorg dat we over de 10 gaan
+                let a = getRandom(6, 9);
+                let b = getRandom(11-a, 9); // Zorg dat a + b altijd > 10 is
                 html += `
                 <div class="brug-item">
-                    <div class="brug-som">${a} + ${b} = ___</div>
-                    <div class="brug-splits">
-                        <div class="brug-benen"></div>
-                        <div class="brug-input"><div class="mini-box"></div><div class="mini-box"></div></div>
-                    </div>
+                    <div>${a} + ${b} = ___</div>
+                    <div class="brug-benen"></div>
+                    <div class="brug-boxes"><div class="mini-box"></div><div class="mini-box"></div></div>
                 </div>`;
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
 
-        // 2. BASIS SOMMEN
+        // 2. PLUS / MIN
         if(document.getElementById('checkPM').checked) {
             let n = parseInt(document.getElementById('numPM').value);
-            let html = `<div class="section"><div class="section-title">Reken uit:</div><div class="grid">`;
+            let html = `<div class="section"><div class="section-title">Oefen de sommen:</div><div class="grid">`;
             for(let i=0; i<n; i++) {
-                let a = getRandom(0, range), b = getRandom(0, range);
-                if(Math.random() > 0.5) {
-                    while(a+b > range) { a=getRandom(0, range); b=getRandom(0, range); }
+                let a, b;
+                if(Math.random() > 0.5) { // Plus
+                    a = getRandom(0, range); b = getRandom(0, range - a);
                     html += `<div>${a} + ${b} = __</div>`;
-                } else {
-                    if(a < b) [a,b] = [b,a];
+                } else { // Min
+                    a = getRandom(0, range); b = getRandom(0, a);
                     html += `<div>${a} - ${b} = __</div>`;
                 }
             }
@@ -193,19 +202,23 @@
         // 3. SPLITSEN
         if(document.getElementById('checkSplits').checked) {
             let n = parseInt(document.getElementById('numSplits').value);
+            let spec = document.getElementById('splitNumbers').value.split(',').filter(x => x!=="").map(Number);
             let html = `<div class="section"><div class="section-title">Splitsen:</div><div class="grid" style="grid-template-columns: repeat(6, 1fr);">`;
             for(let i=0; i<n; i++) {
-                let top = getRandom(2, 10);
+                let top = spec.length ? spec[getRandom(0, spec.length-1)] : getRandom(2, range);
                 let l = getRandom(0, top);
                 html += `<div style="display:flex; flex-direction:column; align-items:center; scale:0.9">
                     <div style="border:2px solid #000; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold">${top}</div>
-                    <div class="brug-benen"></div>
-                    <div class="brug-input"><div class="mini-box">${l}</div><div class="mini-box"></div></div>
+                    <div class="brug-benen" style="margin-left:0"></div>
+                    <div class="brug-boxes" style="margin-left:0"><div class="mini-box">${l}</div><div class="mini-box"></div></div>
                 </div>`;
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
     }
+    
+    // Initial check bij laden
+    checkRange();
 </script>
 </body>
 </html>

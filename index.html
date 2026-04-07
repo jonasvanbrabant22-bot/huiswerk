@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Huiswerk Maker Pro</title>
+    <style>
+        :root {
+            --ios-blue: #007AFF;
+            --ios-bg: #F2F2F7;
+            --ios-secondary: #8E8E93;
+            --ios-card: #FFFFFF;
+            --ios-sep: #C6C6C8;
+        }
+
+        /* --- IPHONE UI STYLE --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background-color: var(--ios-bg);
+            margin: 0;
+            color: #000;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app-container { max-width: 430px; margin: 0 auto; padding: env(safe-area-inset-top) 16px 40px; }
+        
+        .header { text-align: center; margin: 30px 0; }
+        .app-icon { width: 80px; height: 80px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 12px; }
+        h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin: 0; }
+
+        .group-label { font-size: 13px; color: var(--ios-secondary); text-transform: uppercase; margin: 20px 0 8px 16px; }
+        
+        .ios-list { background: var(--ios-card); border-radius: 10px; overflow: hidden; }
+        .ios-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 16px; min-height: 44px;
+            border-bottom: 0.5px solid var(--ios-sep);
+        }
+        .ios-row:last-child { border-bottom: none; }
+        .ios-row label { font-size: 17px; }
+
+        /* INPUTS */
+        select, input[type="number"], input[type="text"] {
+            border: none; background: #E9E9EB; padding: 7px 12px; 
+            border-radius: 8px; font-size: 16px; text-align: right; outline: none;
+        }
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--ios-blue); }
+
+        .btn-main {
+            background: var(--ios-blue); color: white; border: none; width: 100%;
+            padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 600;
+            margin-top: 30px; cursor: pointer;
+        }
+        .btn-main:active { opacity: 0.7; }
+        .btn-back { background: transparent; color: var(--ios-blue); font-size: 17px; border: none; padding: 10px; cursor: pointer; }
+
+        /* --- SPEELS COMPACT WERKBLAD --- */
+        #werkblad { 
+            display: none; background: white; width: 210mm; min-height: 297mm; 
+            padding: 15mm; box-sizing: border-box; font-family: 'Comic Sans MS', cursive;
+        }
+        .wb-head { display: flex; justify-content: space-between; border-bottom: 3px solid #007AFF; padding-bottom: 10px; margin-bottom: 20px; }
+        .section { margin-bottom: 12px; padding: 10px; border-radius: 12px; border: 1px dashed #BDC3C7; }
+        .section-title { font-size: 16px; font-weight: bold; color: #2C3E50; margin-bottom: 8px; border-bottom: 1px solid #ECF0F1; }
+        
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 18px; }
+        
+        /* SLANG & SPLITS (COMPACT) */
+        .splits-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+        .splits-box { display: flex; flex-direction: column; align-items: center; scale: 0.85; }
+        .top-c { border: 2px solid #000; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .v-legs { width: 40px; height: 15px; border-top: 2px solid #000; margin-top: 2px; position: relative; }
+        .v-legs::before { content:''; position:absolute; left:0; top:0; height:15px; border-left:2px solid #000; transform: skewX(-20deg); }
+        .v-legs::after { content:''; position:absolute; right:0; top:0; height:15px; border-right:2px solid #000; transform: skewX(20deg); }
+
+        .slang-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; background: #F8F9F9; padding: 8px; border-radius: 8px; }
+        .bol { width: 32px; height: 32px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; background: #fff; }
+
+        @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; width: 100%; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container no-print">
+    <div id="step1" class="slide active">
+        <div class="header">
+            <img src="huiswerk.jpeg" alt="Logo" class="app-icon">
+            <h1>Huiswerk Maker</h1>
+        </div>
+        <div class="ios-list">
+            <div class="ios-row" onclick="nextStep(2)">
+                <label>✨ Nieuw Werkblad</label>
+                <span style="color:var(--ios-secondary)">❯</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="step2" class="slide" style="display:none">
+        <button class="btn-back" onclick="nextStep(1)">❮ Terug</button>
+        <div class="header"><h1>Instellingen</h1></div>
+
+        <p class="group-label">Niveau</p>
+        <div class="ios-list">
+            <div class="ios-row">
+                <label>Getalbereik</label>
+                <select id="range">
+                    <option value="" disabled selected>Kies...</option>
+                    <option value="10">0 - 10</option>
+                    <option value="20">0 - 20</option>
+                    <option value="100">0 - 100</option>
+                </select>
+            </div>
+        </div>
+
+        <p class="group-label">Onderdelen</p>
+        <div class="ios-list">
+            <div class="ios-row">
+                <label>Basis Sommen (+ / -)</label>
+                <input type="checkbox" id="checkPM" onchange="toggle('pmBox')">
+            </div>
+            <div id="pmBox" style="display:none; background:#F9F9F9">
+                <div class="ios-row" style="padding-left:32px"><span>Aantal Plus</span><input type="number" id="numPlus" value="10"></div>
+                <div class="ios-row" style="padding-left:32px"><span>Aantal Min</span><input type="number" id="numMin" value="10"></div>
+                <div class="ios-row" style="padding-left:32px"><span>Mixen?</span><input type="checkbox" id="mixPM" checked></div>
+            </div>
+
+            <div class="ios-row">
+                <label>Aanvullen (5 + ... = 9)</label>
+                <input type="checkbox" id="checkFill" onchange="toggle('fillBox')">
+            </div>
+            <div id="fillBox" style="display:none; background:#F9F9F9">
+                <div class="ios-row" style="padding-left:32px"><span>Aantal sommen</span><input type="number" id="numFill" value="8"></div>
+            </div>
+
+            <div class="ios-row">
+                <label>Splitsbenen</label>
+                <input type="checkbox" id="checkSplits" onchange="toggle('splitsBox')">
+            </div>
+            <div id="splitsBox" style="display:none; background:#F9F9F9">
+                <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numSplits" value="6"></div>
+                <div class="ios-row" style="padding-left:32px"><span>Specifiek (vb 10)</span><input type="text" id="splitNumbers" placeholder="Laten leeg voor mix"></div>
+            </div>
+
+            <div class="ios-row">
+                <label>Rekenslang 🐍</label>
+                <input type="checkbox" id="checkSL" onchange="toggle('slBox')">
+            </div>
+            <div id="slBox" style="display:none; background:#F9F9F9">
+                <div class="ios-row" style="padding-left:32px"><span>Lengte (bollen)</span><input type="number" id="lenSL" value="5"></div>
+            </div>
+        </div>
+
+        <button class="btn-main btn-success" onclick="generate()">Maak Werkblad</button>
+    </div>
+</div>
+
+<div id="werkblad">
+    <div class="wb-head">
+        <h2 style="margin:0; color:#007AFF">Mijn Oefenblad 🚀</h2>
+        <div style="font-size:12px; text-align:right">Naam: ___________________<br>Datum: ____ / ____ / 2026</div>
+    </div>
+    <div id="inhoud"></div>
+    <div class="no-print" style="text-align:center; margin-top:20px;">
+        <button class="btn-main" style="width:200px" onclick="window.print()">🖨️ Afdrukken</button>
+        <button class="btn-back" onclick="location.reload()">Aanpassen</button>
+    </div>
+</div>
+
+<script>
+    function nextStep(n) {
+        document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
+        document.getElementById('step'+n).style.display = 'block';
+    }
+    function toggle(id) { document.getElementById(id).style.display = document.getElementById(id).style.display === 'none' ? 'block' : 'none'; }
+    function getRandom(max) { return Math.floor(Math.random() * (max + 1)); }
+
+    function generate() {
+        const range = parseInt(document.getElementById('range').value);
+        if(!range) return alert("Kies eerst een getalbereik!");
+
+        document.querySelector('.app-container').style.display = 'none';
+        document.getElementById('werkblad').style.display = 'block';
+        const inhoud = document.getElementById('inhoud');
+        inhoud.innerHTML = '';
+
+        // BASIS SOMMEN
+        if(document.getElementById('checkPM').checked) {
+            let sommen = [];
+            let pN = parseInt(document.getElementById('numPlus').value) || 0;
+            let mN = parseInt(document.getElementById('numMin').value) || 0;
+            for(let i=0; i<pN; i++) {
+                let a = getRandom(range), b = getRandom(range);
+                while(a+b > range) { a=getRandom(range); b=getRandom(range); }
+                sommen.push(`${a} + ${b} = ___`);
+            }
+            for(let i=0; i<mN; i++) {
+                let a = getRandom(range), b = getRandom(range);
+                if(a<b) [a,b] = [b,a];
+                sommen.push(`${a} - ${b} = ___`);
+            }
+            if(document.getElementById('mixPM').checked) sommen.sort(() => Math.random() - 0.5);
+            inhoud.innerHTML += `<div class="section"><div class="section-title">Plus en min</div><div class="grid">${sommen.map(s => `<div>${s}</div>`).join('')}</div></div>`;
+        }
+
+        // AANVULLEN (MOEILIJKER)
+        if(document.getElementById('checkFill').checked) {
+            let sommen = [];
+            let n = parseInt(document.getElementById('numFill').value) || 0;
+            for(let i=0; i<n; i++) {
+                let uitkomst = getRandom(range);
+                let start = getRandom(uitkomst);
+                if(Math.random() > 0.5) sommen.push(`${start} + ... = ${uitkomst}`);
+                else sommen.push(`${uitkomst} - ... = ${start}`);
+            }
+            inhoud.innerHTML += `<div class="section"><div class="section-title">Vul het juiste getal in</div><div class="grid">${sommen.map(s => `<div>${s}</div>`).join('')}</div></div>`;
+        }
+
+        // SPLITSEN
+        if(document.getElementById('checkSplits').checked) {
+            let html = `<div class="section"><div class="section-title">Splitsen</div><div class="splits-grid">`;
+            let n = parseInt(document.getElementById('numSplits').value) || 0;
+            let spec = document.getElementById('splitNumbers').value.split(',').filter(x => x!=="").map(Number);
+            for(let i=0; i<n; i++){
+                let top = spec.length ? spec[getRandom(spec.length-1)] : getRandom(range);
+                let l = getRandom(top);
+                html += `<div class="splits-box"><div class="top-c">${top}</div><div class="v-legs"></div><div style="display:flex; gap:10px;"><div style="border-bottom:2px solid #000; width:20px; text-align:center">${l}</div><div style="border-bottom:2px solid #000; width:20px;"></div></div></div>`;
+            }
+            inhoud.innerHTML += html + `</div></div>`;
+        }
+
+        // SLANG
+        if(document.getElementById('checkSL').checked) {
+            let len = parseInt(document.getElementById('lenSL').value) || 5;
+            let cur = getRandom(range/2);
+            let html = `<div class="section"><div class="section-title">Rekenslang</div><div class="slang-row"><div class="bol">${cur}</div>`;
+            for(let i=0; i<len-1; i++){
+                let op = Math.random() > 0.5 ? '+' : '-';
+                let v = getRandom(4)+1;
+                if(op==='-' && cur-v < 0) op='+'; if(op==='+' && cur+v > range) op='-';
+                cur = (op==='+') ? cur+v : cur-v;
+                html += `<span style="font-size:10px">(${op}${v}) ➔</span><div class="bol"> </div>`;
+            }
+            inhoud.innerHTML += html + `</div></div>`;
+        }
+    }
+</script>
+</body>
+</html>

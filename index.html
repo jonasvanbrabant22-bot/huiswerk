@@ -16,6 +16,8 @@
             --ios-secondary: #8E8E93;
             --ios-card: #FFFFFF;
             --ios-sep: #C6C6C8;
+            /* School-vriendelijk lettertype voor kinderen */
+            --kid-font: 'Andika', 'Century Gothic', AppleGothic, sans-serif;
         }
 
         body {
@@ -25,41 +27,58 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* --- IPHONE UI --- */
         .app-container { max-width: 430px; margin: 0 auto; padding: env(safe-area-inset-top) 16px 40px; }
         .header { text-align: center; margin: 20px 0; }
         .app-icon { width: 85px; height: 85px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 10px; object-fit: cover; }
         h1 { font-size: 26px; font-weight: 700; margin: 0; }
-
         .group-label { font-size: 13px; color: var(--ios-secondary); text-transform: uppercase; margin: 20px 0 8px 16px; }
         .ios-list { background: var(--ios-card); border-radius: 10px; overflow: hidden; margin-bottom: 15px; border: 0.5px solid var(--ios-sep); }
         .ios-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; min-height: 44px; border-bottom: 0.5px solid var(--ios-sep); }
         .ios-row:last-child { border-bottom: none; }
-        
-        input[type="number"], select, input[type="text"] { border: none; background: #EFEEF0; padding: 7px 10px; border-radius: 8px; font-size: 16px; text-align: right; outline: none; }
+        input[type="number"], select { border: none; background: #EFEEF0; padding: 7px 10px; border-radius: 8px; font-size: 16px; text-align: right; outline: none; }
         input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--ios-blue); }
-
         .btn-main { background: var(--ios-blue); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 600; margin-top: 20px; cursor: pointer; }
         .btn-success { background: #34C759; }
 
-        /* --- WERKBLAD --- */
-        #werkblad { display: none; background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; font-family: 'Comic Sans MS', cursive; }
-        .section { margin-bottom: 12px; border: 1px solid #eee; padding: 10px; border-radius: 10px; }
-        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 8px; color: #007AFF; border-bottom: 1px solid #eee; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 18px; }
-
-        .brug-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .brug-item { display: flex; flex-direction: column; margin-bottom: 10px; }
-        .brug-benen { width: 35px; height: 15px; border-top: 2px solid #000; position: relative; margin: 4px 0 0 25px; }
-        .brug-benen::before, .brug-benen::after { content:''; position:absolute; height:15px; border-left:2px solid #000; top:0; }
-        .brug-benen::before { left:0; transform: skewX(-25deg); }
-        .brug-benen::after { right:0; transform: skewX(25deg); }
-        .brug-boxes { display: flex; justify-content: space-between; width: 55px; margin-left: 15px; }
-        .mini-box { border-bottom: 1.5px solid #000; width: 22px; height: 20px; text-align: center; }
+        /* --- WERKBLAD (KINDVRIENDELIJK) --- */
+        #werkblad { 
+            display: none; background: white; width: 210mm; min-height: 297mm; 
+            padding: 15mm; box-sizing: border-box; 
+            font-family: var(--kid-font); /* Duidelijk leesbaar voor kinderen */
+            color: #1a1a1a;
+        }
+        .wb-controls { 
+            display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; 
+        }
+        .section { margin-bottom: 15px; border: 2px solid #f0f0f0; padding: 12px; border-radius: 15px; }
+        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #000; border-bottom: 2px solid #eee; }
         
-        .slang-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; background: #f9f9f9; padding: 10px; border-radius: 8px; }
-        .bol { width: 32px; height: 32px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: #fff; }
+        /* Grid voor sommen */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 20px; }
+        .som-box { padding: 5px 0; letter-spacing: 1px; }
 
-        @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; width: 100%; } }
+        /* Splitsingen */
+        .splits-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+        .splits-box { display: flex; flex-direction: column; align-items: center; scale: 0.9; }
+        .top-circle { border: 2.5px solid #000; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
+        .benen { width: 40px; height: 20px; border-top: 2.5px solid #000; position: relative; margin-top: 4px; }
+        .benen::before, .benen::after { content:''; position:absolute; height:20px; border-left:2.5px solid #000; top:0; }
+        .benen::before { left:0; transform: skewX(-25deg); }
+        .benen::after { right:0; transform: skewX(25deg); }
+        .onder-box { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
+        .mini-invul { border-bottom: 2px solid #000; width: 25px; height: 22px; text-align: center; font-size: 18px; }
+
+        /* Rekenslang */
+        .slang-container { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: #fafafa; padding: 12px; border-radius: 12px; }
+        .slang-bol { width: 38px; height: 38px; border: 2.5px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: white; font-size: 18px; }
+        .pijl { font-size: 12px; font-weight: bold; color: #444; }
+
+        @media print { 
+            .no-print { display: none !important; } 
+            #werkblad { display: block !important; margin: 0; width: 100%; padding: 5mm; } 
+            .section { border-color: #ccc; }
+        }
     </style>
 </head>
 <body>
@@ -70,116 +89,177 @@
             <img src="huiswerk.jpeg" alt="Logo" class="app-icon">
             <h1>Huiswerk Maker</h1>
         </div>
-        <div class="ios-list"><div class="ios-row" onclick="nextStep(2)"><label>Maak Nieuw Werkblad</label><span>❯</span></div></div>
+        <div class="ios-list">
+            <div class="ios-row" onclick="nextStep(2)">
+                <label>Nieuw Werkblad maken</label>
+                <span style="color:var(--ios-secondary)">❯</span>
+            </div>
+        </div>
     </div>
 
     <div id="step2" class="slide" style="display:none">
-        <p class="group-label">Niveau</p>
+        <p class="group-label">Basis</p>
         <div class="ios-list">
-            <div class="ios-row"><label>Bereik</label>
+            <div class="ios-row">
+                <label>Getalbereik</label>
                 <select id="range" onchange="checkRange()">
-                    <option value="10">0 - 10</option>
-                    <option value="20" selected>0 - 20</option>
-                    <option value="100">0 - 100</option>
+                    <option value="10">0 tot 10</option>
+                    <option value="20" selected>0 tot 20</option>
+                    <option value="100">0 tot 100</option>
                 </select>
             </div>
         </div>
 
-        <p class="group-label">Oefeningen</p>
+        <p class="group-label">Oefeningen kiezen</p>
         <div class="ios-list">
-            <div id="brugOption"><div class="ios-row"><label>Vriendje van (Brug)</label><input type="checkbox" id="checkBrug"></div></div>
-            <div class="ios-row"><label>Plus / Min</label><input type="checkbox" id="checkPM" onchange="toggle('pmBox')"></div>
-            <div id="pmBox" style="display:none; background:#F9F9F9">
-                <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numPM" value="12"></div>
+            <div id="brugRow" class="ios-row">
+                <label>Brug over 10 (Vriendje)</label>
+                <input type="checkbox" id="checkBrug">
             </div>
-            <div class="ios-row"><label>Invullen (5+..=9)</label><input type="checkbox" id="checkFill" onchange="toggle('fillBox')"></div>
-            <div id="fillBox" style="display:none; background:#F9F9F9">
-                <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numFill" value="8"></div>
+            <div class="ios-row">
+                <label>Plus & Min sommen</label>
+                <input type="checkbox" id="checkPM" onchange="toggle('pmCfg')">
             </div>
-            <div class="ios-row"><label>Splitsbenen</label><input type="checkbox" id="checkSplits" onchange="toggle('spBox')"></div>
-            <div id="spBox" style="display:none; background:#F9F9F9">
-                <div class="ios-row" style="padding-left:32px"><span>Aantal</span><input type="number" id="numSplits" value="6"></div>
+            <div id="pmCfg" style="display:none; background:#f9f9f9; padding-left:20px;">
+                <div class="ios-row"><span>Aantal</span><input type="number" id="numPM" value="12"></div>
             </div>
-            <div class="ios-row"><label>Rekenslang 🐍</label><input type="checkbox" id="checkSL" onchange="toggle('slBox')"></div>
-            <div id="slBox" style="display:none; background:#F9F9F9">
-                <div class="ios-row" style="padding-left:32px"><span>Lengte</span><input type="number" id="lenSL" value="5"></div>
+            <div class="ios-row">
+                <label>Invullen (..+5=9)</label>
+                <input type="checkbox" id="checkFill" onchange="toggle('fillCfg')">
+            </div>
+            <div id="fillCfg" style="display:none; background:#f9f9f9; padding-left:20px;">
+                <div class="ios-row"><span>Aantal</span><input type="number" id="numFill" value="8"></div>
+            </div>
+            <div class="ios-row">
+                <label>Splitsbenen</label>
+                <input type="checkbox" id="checkSplits" onchange="toggle('spCfg')">
+            </div>
+            <div id="spCfg" style="display:none; background:#f9f9f9; padding-left:20px;">
+                <div class="ios-row"><span>Aantal</span><input type="number" id="numSplits" value="6"></div>
+            </div>
+            <div class="ios-row">
+                <label>Rekenslang 🐍</label>
+                <input type="checkbox" id="checkSL" onchange="toggle('slCfg')">
+            </div>
+            <div id="slCfg" style="display:none; background:#f9f9f9; padding-left:20px;">
+                <div class="ios-row"><span>Aantal bollen</span><input type="number" id="lenSL" value="5"></div>
             </div>
         </div>
 
-        <button class="btn-main btn-success" onclick="generate()">Genereer Werkblad ✨</button>
+        <button class="btn-main btn-success" onclick="generate()">Bekijk Werkblad ✨</button>
         <button class="btn-main" style="background:#E5E5EA; color:#007AFF" onclick="nextStep(1)">Terug</button>
     </div>
 </div>
 
 <div id="werkblad">
-    <div style="border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:15px; display:flex; justify-content:space-between">
-        <span style="font-weight:bold">Mijn Werkblad</span><span>Naam: __________________</span>
+    <div class="no-print wb-controls">
+        <button class="btn-main" style="margin:0; width:140px; background:#FF3B30" onclick="goBack()">❮ Aanpassen</button>
+        <button class="btn-main btn-success" style="margin:0; width:140px;" onclick="window.print()">Printen 🖨️</button>
     </div>
+    
+    <div style="border-bottom:3px solid #000; padding-bottom:8px; margin-bottom:20px; display:flex; justify-content:space-between; font-weight:bold; font-size:18px;">
+        <span>Oefenblad</span>
+        <span>Naam: ___________________</span>
+    </div>
+
     <div id="inhoud"></div>
-    <div class="no-print" style="text-align:center; margin-top:20px;"><button class="btn-main" onclick="window.print()">Printen</button></div>
 </div>
 
 <script>
-    function nextStep(n) { document.querySelectorAll('.slide').forEach(s => s.style.display = 'none'); document.getElementById('step'+n).style.display = 'block'; }
-    function toggle(id) { const el = document.getElementById(id); el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
-    function checkRange() { document.getElementById('brugOption').style.display = (document.getElementById('range').value === "10") ? 'none' : 'block'; }
+    function nextStep(n) {
+        document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
+        document.getElementById('step'+n).style.display = 'block';
+    }
+
+    function goBack() {
+        document.getElementById('werkblad').style.display = 'none';
+        document.querySelector('.app-container').style.display = 'block';
+    }
+
+    function toggle(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function checkRange() {
+        document.getElementById('brugRow').style.display = (document.getElementById('range').value === "10") ? 'none' : 'flex';
+    }
+
     function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
     function generate() {
         const range = parseInt(document.getElementById('range').value);
         document.querySelector('.app-container').style.display = 'none';
         document.getElementById('werkblad').style.display = 'block';
-        const inhoud = document.getElementById('inhoud'); inhoud.innerHTML = '';
+        
+        const inhoud = document.getElementById('inhoud');
+        inhoud.innerHTML = '';
 
+        // 1. BRUG OVER 10
         if(document.getElementById('checkBrug').checked && range > 10) {
-            let html = `<div class="section"><div class="section-title">Vriendje van (Brug over 10)</div><div class="brug-grid">`;
+            let html = `<div class="section"><div class="section-title">Maak de brug (Vriendjes van 10)</div><div class="brug-grid">`;
             for(let i=0; i<6; i++) {
                 let a = getRandom(6,9), b = getRandom(11-a, 9);
-                html += `<div class="brug-item"><div>${a} + ${b} = __</div><div class="brug-benen"></div><div class="brug-boxes"><div class="mini-box"></div><div class="mini-box"></div></div></div>`;
+                html += `<div class="brug-item"><div class="som-box">${a} + ${b} = ___</div><div class="benen"></div><div class="onder-box"><div class="mini-invul"></div><div class="mini-invul"></div></div></div>`;
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
 
+        // 2. PLUS & MIN
         if(document.getElementById('checkPM').checked) {
-            let n = parseInt(document.getElementById('numPM').value), html = `<div class="section"><div class="section-title">Plus en min</div><div class="grid">`;
+            let n = parseInt(document.getElementById('numPM').value);
+            let html = `<div class="section"><div class="section-title">Plus en Min sommen</div><div class="grid">`;
             for(let i=0; i<n; i++) {
                 let a, b;
-                if(Math.random() > 0.5) { a = getRandom(0, range); b = getRandom(0, range-a); html += `<div>${a} + ${b} = __</div>`; }
-                else { a = getRandom(0, range); b = getRandom(0, a); html += `<div>${a} - ${b} = __</div>`; }
+                if(Math.random() > 0.5) { 
+                    a = getRandom(0, range); b = getRandom(0, range-a); 
+                    html += `<div class="som-box">${a} + ${b} = __</div>`;
+                } else { 
+                    a = getRandom(0, range); b = getRandom(0, a); 
+                    html += `<div class="som-box">${a} - ${b} = __</div>`;
+                }
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
 
+        // 3. INVULLEN
         if(document.getElementById('checkFill').checked) {
-            let n = parseInt(document.getElementById('numFill').value), html = `<div class="section"><div class="section-title">Vul in</div><div class="grid">`;
+            let n = parseInt(document.getElementById('numFill').value);
+            let html = `<div class="section"><div class="section-title">Vul het getal in</div><div class="grid">`;
             for(let i=0; i<n; i++) {
                 let res = getRandom(2, range), a = getRandom(1, res-1);
-                if(Math.random() > 0.5) html += `<div>${a} + .. = ${res}</div>`;
-                else html += `<div>${res} - .. = ${a}</div>`;
+                if(Math.random() > 0.5) html += `<div class="som-box">${a} + __ = ${res}</div>`;
+                else html += `<div class="som-box">${res} - __ = ${a}</div>`;
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
 
+        // 4. SPLITSEN
         if(document.getElementById('checkSplits').checked) {
-            let n = parseInt(document.getElementById('numSplits').value), html = `<div class="section"><div class="section-title">Splitsen</div><div class="grid" style="grid-template-columns:repeat(6,1fr)">`;
+            let n = parseInt(document.getElementById('numSplits').value);
+            let html = `<div class="section"><div class="section-title">Splits de getallen</div><div class="splits-grid">`;
             for(let i=0; i<n; i++) {
                 let t = getRandom(2, range), l = getRandom(0, t);
-                html += `<div style="display:flex; flex-direction:column; align-items:center; scale:0.8"><div style="border:2px solid #000; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center">${t}</div><div class="brug-benen" style="margin-left:0"></div><div class="brug-boxes" style="margin-left:0"><div class="mini-box">${l}</div><div class="mini-box"></div></div></div>`;
+                html += `<div class="splits-box"><div class="top-circle">${t}</div><div class="benen"></div><div class="onder-box"><div class="mini-invul">${l}</div><div class="mini-invul"></div></div></div>`;
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
 
+        // 5. SLANG
         if(document.getElementById('checkSL').checked) {
-            let len = parseInt(document.getElementById('lenSL').value), cur = getRandom(1, range/2), html = `<div class="section"><div class="section-title">Rekenslang</div><div class="slang-row"><div class="bol">${cur}</div>`;
+            let len = parseInt(document.getElementById('lenSL').value);
+            let cur = getRandom(1, range/2);
+            let html = `<div class="section"><div class="section-title">De Rekenslang</div><div class="slang-container"><div class="slang-bol">${cur}</div>`;
             for(let i=0; i<len-1; i++) {
-                let op = Math.random() > 0.5 ? '+' : '-', v = getRandom(1, 3);
+                let op = Math.random() > 0.5 ? '+' : '-', v = getRandom(1, 4);
                 if(op === '+' && cur+v > range) op = '-'; if(op === '-' && cur-v < 0) op = '+';
                 cur = (op === '+') ? cur+v : cur-v;
-                html += `<span style="font-size:10px">(${op}${v})➔</span><div class="bol"></div>`;
+                html += `<span class="pijl">(${op}${v}) ➔</span><div class="slang-bol"></div>`;
             }
             inhoud.innerHTML += html + `</div></div>`;
         }
     }
+    
     checkRange();
 </script>
 </body>

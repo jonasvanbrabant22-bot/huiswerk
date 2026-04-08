@@ -38,12 +38,14 @@
         /* --- WERKBLAD --- */
         #werkblad { display: none; background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; font-family: var(--kid-font); color: #1a1a1a; }
         .wb-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-        .section { margin-bottom: 15px; border: 2px solid #f0f0f0; padding: 12px; border-radius: 15px; }
+        .section { margin-bottom: 15px; border: 2px solid #f0f0f0; padding: 12px; border-radius: 15px; page-break-inside: avoid; }
         .section-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #eee; }
         
-        /* Wiskunde / Grid (Originele Logica) */
+        /* Wiskunde / Grid */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 20px; }
         .som-box { padding: 5px 0; letter-spacing: 1px; }
+
+        /* Splitsingen */
         .splits-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
         .splits-box { display: flex; flex-direction: column; align-items: center; scale: 0.85; }
         .top-circle { border: 2.5px solid #000; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
@@ -51,19 +53,249 @@
         .benen::before, .benen::after { content:''; position:absolute; height:20px; border-left:2.5px solid #000; top:0; }
         .benen::before { left:0; transform: skewX(-25deg); } .benen::after { right:0; transform: skewX(25deg); }
         .onder-box { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
-        .mini-invul { border-bottom: 2px solid #000; width: 25px; height: 22px; text-align: center; }
+        .mini-invul { border-bottom: 2px solid #000; width: 25px; height: 22px; text-align: center; font-size: 18px; }
+
+        /* Brug over 10 Layout */
+        .brug-item { display: inline-block; margin-bottom: 30px; width: 160px; font-size: 20px; }
+        .brug-som { margin-bottom: 5px; }
+        .brug-benen-container { margin-left: 38px; display: flex; flex-direction: column; align-items: center; width: 40px; }
+        .brug-onder { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
+
+        /* Rekenslang */
         .slang-container { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: #fafafa; padding: 12px; border-radius: 12px; }
         .slang-bol { width: 38px; height: 38px; border: 2.5px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: white; }
 
-        /* Lezen & Schrijven (A4) */
+        /* Lezen & Schrijven */
         .lees-zin { font-size: 19px; margin-bottom: 8px; font-weight: bold; }
         .schrijf-regel { height: 52px; position: relative; margin-bottom: 22px; width: 100%; }
         .lijn { position: absolute; left: 0; right: 0; border-bottom: 1px solid var(--line-color); }
         .dak { top: 0px; } .plafond { top: 17px; border-bottom-style: dashed; } .vloer { top: 34px; border-bottom: 1.5px solid var(--floor-color); } .kelder { top: 51px; }
 
         /* Vraagstukken */
-        .vraagstuk-item { margin-bottom: 30px; font-size: 18px; page-break-inside: avoid; }
+        .vraagstuk-item { margin-bottom: 30px; font-size: 18px; page-break-inside: avoid; font-family: var(--kid-font); }
         .vraagstuk-tekst { margin-bottom: 12px; line-height: 1.5; font-style: italic; }
+        .vraagstuk-oplossing { border: 1.5px solid #eee; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; }
+
+        @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; padding: 5mm; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container no-print">
+    <div id="home" class="slide">
+        <div class="header">
+            <img src="huiswerk.jpeg" alt="Logo" class="app-icon">
+            <h1>Huiswerk Maker</h1>
+        </div>
+        <div class="ios-list">
+            <div class="ios-row" onclick="showScreen('wiskunde')"><label>🔢 Wiskunde</label><span>❯</span></div>
+            <div class="ios-row" onclick="showScreen('lezen')"><label>📖 Lezen & Schrijven</label><span>❯</span></div>
+            <div class="ios-row" onclick="showScreen('vraagstukken')"><label>💡 Vraagstukken</label><span>❯</span></div>
+        </div>
+    </div>
+
+    <div id="wiskunde" class="slide" style="display:none">
+        <p class="group-label">Instellingen</p>
+        <div class="ios-list">
+            <div class="ios-row"><label>Bereik</label>
+                <select id="range" onchange="checkRange()">
+                    <option value="10" selected>0 tot 10</option>
+                    <option value="20">0 tot 20</option>
+                    <option value="100">0 tot 100</option>
+                </select>
+            </div>
+            <div id="brugRow" class="ios-row" style="display:none"><label>Brug over 10 (splitsing)</label><input type="checkbox" id="checkBrug"></div>
+        </div>
+        <p class="group-label">Oefeningen</p>
+        <div class="ios-list">
+            <div class="ios-row"><label>Plus & Min</label><input type="checkbox" id="checkPM" checked onchange="toggle('pmCfg')"></div>
+            <div id="pmCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Aantal</span><input type="number" id="numPM" value="12"></div></div>
+            <div class="ios-row"><label>Invullen (..+5=9)</label><input type="checkbox" id="checkFill" onchange="toggle('fillCfg')"></div>
+            <div id="fillCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Aantal</span><input type="number" id="numFill" value="8"></div></div>
+            <div class="ios-row"><label>Standaard Splitsingen</label><input type="checkbox" id="checkSplits" onchange="toggle('spCfg')"></div>
+            <div id="spCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Aantal</span><input type="number" id="numSplits" value="6"></div></div>
+            <div class="ios-row"><label>Rekenslang 🐍</label><input type="checkbox" id="checkSL" onchange="toggle('slCfg')"></div>
+            <div id="slCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Bollen</span><input type="number" id="lenSL" value="5"></div></div>
+        </div>
+        <button class="btn-main btn-success" onclick="generate('math')">Maak Werkblad ✨</button>
+        <button class="btn-main" onclick="showScreen('home')">Terug</button>
+    </div>
+
+    <div id="lezen" class="slide" style="display:none">
+        <p class="group-label">Leesniveau</p>
+        <div class="ios-list">
+            <div class="ios-row"><label>Selecteer AVI</label>
+                <select id="aviLevel">
+                    <option value="avi1">AVI Start</option>
+                    <option value="avi2">AVI M3</option>
+                    <option value="avi3">AVI E3</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-main btn-success" onclick="generate('readwrite')">Maak Werkblad ✨</button>
+        <button class="btn-main" onclick="showScreen('home')">Terug</button>
+    </div>
+
+    <div id="vraagstukken" class="slide" style="display:none">
+        <p class="group-label">Instellingen</p>
+        <div class="ios-list">
+            <div class="ios-row"><label>Bereik</label>
+                <select id="v-range">
+                    <option value="10">0 tot 10</option>
+                    <option value="20" selected>0 tot 20</option>
+                    <option value="100">0 tot 100</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-main btn-success" onclick="generate('stories')">Maak Werkblad ✨</button>
+        <button class="btn-main" onclick="showScreen('home')">Terug</button>
+    </div>
+</div>
+
+<div id="werkblad">
+    <div class="no-print wb-controls">
+        <button class="btn-main" style="margin:0; width:140px; background:#FF3B30" onclick="goBack()">❮ Terug</button>
+        <button class="btn-main btn-success" style="margin:0; width:140px;" onclick="window.print()">Printen 🖨️</button>
+    </div>
+    <div style="border-bottom:3px solid #000; padding-bottom:8px; margin-bottom:20px; display:flex; justify-content:space-between; font-weight:bold; font-size:18px;">
+        <span id="wb-titel">Huiswerk</span><span>Naam: ___________________</span>
+    </div>
+    <div id="inhoud"></div>
+</div>
+
+<script>
+    const readData = {
+        avi1: ["pim is een mug.", "de roos is rood.", "ik zie een vis.", "daan gaat naar bos.", "het ijs is koud.", "een mol in de tuin.", "aap eet een noot.", "zus speelt met pop.", "jan heeft een bal.", "het is een bel."],
+        avi2: ["De poes slaapt op de mat.", "Ik speel met de bal.", "Mama bakt een koek.", "De vogel bouwt een nest.", "Ik zwem in het bad.", "Papa wast de auto.", "Het gras is groen.", "Mijn fiets is snel."],
+        avi3: ["Vandaag gaan we naar het bos.", "Zie je de eekhoorn daar?", "Ik heb een schelp gevonden.", "De ridder vecht met de draak.", "Morgen gaan we naar oma.", "De hond rent achter de bal.", "Er zit een vogel in de boom.", "De appel is lekker."]
+    };
+
+    const storyTemplates = [
+        { q: "Er zitten [X] vogels op een tak in de boom. Er vliegen [Y] vogels weg omdat ze honger hebben. Hoeveel vogels blijven er op de tak zitten?", op: "-" },
+        { q: "Jan heeft [X] rode knikkers in zijn zak. Hij wint bij het spelen nog [Y] blauwe knikkers. Hoeveel knikkers heeft Jan nu in totaal?", op: "+" },
+        { q: "In de mand liggen [X] appels. Mama koopt in de winkel nog [Y] peren en legt ze erbij. Hoeveel vruchten liggen er nu in de mand?", op: "+" },
+        { q: "Er staan [X] auto's op de parking bij de school. Er rijden [Y] auto's naar huis. Hoeveel auto's staan er nog op de parking?", op: "-" },
+        { q: "Roos plukt [X] mooie bloemen in de tuin. Ze geeft [Y] bloemen aan haar lieve oma. Hoeveel bloemen houdt Roos zelf over?", op: "-" }
+    ];
+
+    function showScreen(id) {
+        document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function goBack() {
+        document.getElementById('werkblad').style.display = 'none';
+        document.querySelector('.app-container').style.display = 'block';
+    }
+
+    function toggle(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function checkRange() {
+        document.getElementById('brugRow').style.display = (document.getElementById('range').value !== "10") ? 'flex' : 'none';
+    }
+
+    function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function generate(type) {
+        document.querySelector('.app-container').style.display = 'none';
+        document.getElementById('werkblad').style.display = 'block';
+        const inhoud = document.getElementById('inhoud');
+        inhoud.innerHTML = '';
+
+        if(type === 'math') {
+            document.getElementById('wb-titel').innerText = "Wiskunde";
+            const range = parseInt(document.getElementById('range').value);
+            
+            if(document.getElementById('checkBrug').checked && range >= 20) {
+                let h = `<div class="section"><div class="section-title">Rekenen met de brug</div><div style="display:flex; flex-wrap:wrap; gap:15px;">`;
+                for(let i=0; i<6; i++){
+                    let a=getRandom(6,9), b=getRandom(range/2-2, range/2);
+                    h += `<div class="brug-item">
+                            <div class="brug-som">${a} + ${b} = __</div>
+                            <div class="brug-benen-container">
+                                <div class="benen"></div>
+                                <div class="brug-onder">
+                                    <div class="mini-invul"></div>
+                                    <div class="mini-invul"></div>
+                                </div>
+                            </div>
+                          </div>`;
+                }
+                inhoud.innerHTML += h + `</div></div>`;
+            }
+
+            if(document.getElementById('checkPM').checked) {
+                let n = parseInt(document.getElementById('numPM').value);
+                let h = `<div class="section"><div class="section-title">Bewerkingen</div><div class="grid">`;
+                for(let i=0; i<n; i++) {
+                    if(Math.random()>0.5){ let a=getRandom(0, range), b=getRandom(0, range-a); h += `<div class="som-box">${a}+${b}=__</div>`; }
+                    else { let a=getRandom(0, range), b=getRandom(0, a); h += `<div class="som-box">${a}-${b}=__</div>`; }
+                }
+                inhoud.innerHTML += h + `</div></div>`;
+            }
+
+            if(document.getElementById('checkFill').checked) {
+                let n = parseInt(document.getElementById('numFill').value);
+                let h = `<div class="section"><div class="section-title">Vul de som aan</div><div class="grid">`;
+                for(let i=0; i<n; i++){
+                    let res=getRandom(5, range), a=getRandom(1, res-1);
+                    h += `<div class="som-box">${a}+__=${res}</div>`;
+                }
+                inhoud.innerHTML += h + `</div></div>`;
+            }
+
+            if(document.getElementById('checkSplits').checked) {
+                let n = parseInt(document.getElementById('numSplits').value);
+                let h = `<div class="section"><div class="section-title">Splitsen</div><div class="splits-grid">`;
+                for(let i=0; i<n; i++){
+                    let t=getRandom(2, range), l=getRandom(0, t);
+                    h += `<div class="splits-box"><div class="top-circle">${t}</div><div class="benen"></div><div class="onder-box"><div class="mini-invul">${l}</div><div class="mini-invul"></div></div></div>`;
+                }
+                inhoud.innerHTML += h + `</div></div>`;
+            }
+
+            if(document.getElementById('checkSL').checked) {
+                let len = parseInt(document.getElementById('lenSL').value);
+                let cur = getRandom(1, range/2);
+                let h = `<div class="section"><div class="section-title">Rekenslang</div><div class="slang-container"><div class="slang-bol">${cur}</div>`;
+                for(let i=0; i<len-1; i++){
+                    let op=Math.random()>0.5?'+':'-', v=getRandom(1,Math.floor(range/10)+2);
+                    if(op==='+' && cur+v>range) op='-'; if(op==='-' && cur-v<0) op='+';
+                    cur=(op==='+')?cur+v:cur-v;
+                    h += `<span>(${op}${v})➔</span><div class="slang-bol"></div>`;
+                }
+                inhoud.innerHTML += h + `</div></div>`;
+            }
+        } 
+        else if(type === 'readwrite') {
+            document.getElementById('wb-titel').innerText = "Lezen & Schrijven";
+            const lvl = document.getElementById('aviLevel').value;
+            const zinnen = [...readData[lvl]].sort(() => 0.5 - Math.random()).slice(0, 8);
+            let h = `<div class="section">`;
+            zinnen.forEach(z => {
+                h += `<div class="lees-zin">${z}</div><div class="schrijf-regel"><div class="lijn dak"></div><div class="lijn plafond"></div><div class="lijn vloer"></div><div class="lijn kelder"></div></div>`;
+            });
+            inhoud.innerHTML += h + `</div>`;
+        }
+        else if(type === 'stories') {
+            document.getElementById('wb-titel').innerText = "Vraagstukken";
+            const range = parseInt(document.getElementById('v-range').value);
+            let h = `<div class="section">`;
+            const stories = [...storyTemplates].sort(() => 0.5 - Math.random()).slice(0, 4);
+            stories.forEach(s => {
+                let x = getRandom(Math.floor(range/2), range), y = getRandom(1, Math.floor(range/2));
+                let tekst = s.q.replace("[X]", x).replace("[Y]", y);
+                h += `<div class="vraagstuk-item"><div class="vraagstuk-tekst">${tekst}</div><div class="vraagstuk-oplossing"><span>Bewerking: ___________________</span> <span>Antwoord: ________</span></div></div>`;
+            });
+            inhoud.innerHTML += h + `</div>`;
+        }
+    }
+</script>
+</body>
+</html>        .vraagstuk-tekst { margin-bottom: 12px; line-height: 1.5; font-style: italic; }
         .vraagstuk-oplossing { border: 1.5px solid #eee; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; }
 
         @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; padding: 5mm; } }

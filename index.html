@@ -7,45 +7,125 @@
     
     <link rel="apple-touch-icon" href="huiswerk.jpeg">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link href="https://fonts.googleapis.com/css2?family=Andika&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Andika&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --ios-blue: #007AFF;
-            --ios-bg: #F2F2F7;
-            --ios-secondary: #8E8E93;
-            --ios-card: #FFFFFF;
-            --ios-sep: #C6C6C8;
+            --primary: #3A3F47; /* Modern antraciet ipv fel blauw */
+            --accent: #6366F1;  /* Zacht Indigo voor subtiele accenten */
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text-main: #1E293B;
+            --text-sub: #64748B;
+            --border: #E2E8F0;
+            --input-bg: #F1F5F9;
             --kid-font: 'Andika', sans-serif;
             --line-color: #AED6F1;
             --floor-color: #5DADE2;
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--ios-bg); margin: 0; }
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            margin: 0; 
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
 
-        /* --- UI --- */
+        /* --- UI CONTAINER --- */
         .app-container { max-width: 430px; margin: 0 auto; padding: 20px 16px; }
-        .header { text-align: center; margin: 20px 0; }
-        .app-icon { width: 85px; height: 85px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 10px; object-fit: cover; }
-        .group-label { font-size: 13px; color: var(--ios-secondary); text-transform: uppercase; margin: 20px 0 8px 16px; }
-        .ios-list { background: var(--ios-card); border-radius: 10px; overflow: hidden; margin-bottom: 15px; border: 0.5px solid var(--ios-sep); }
-        .ios-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; min-height: 44px; border-bottom: 0.5px solid var(--ios-sep); }
-        select, input[type="number"] { border: none; background: #EFEEF0; padding: 7px 10px; border-radius: 8px; font-size: 16px; outline: none; }
-        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--ios-blue); }
-        .btn-main { background: var(--ios-blue); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 17px; font-weight: 600; margin-top: 20px; cursor: pointer; }
-        .btn-success { background: #34C759; }
+        
+        .header { text-align: center; margin: 40px 0 30px 0; }
+        .app-icon { 
+            width: 90px; height: 90px; border-radius: 22px; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
+            margin-bottom: 16px; object-fit: cover;
+        }
+        
+        h1 { font-size: 24px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; }
 
-        /* --- WERKBLAD --- */
+        .group-label { 
+            font-size: 12px; color: var(--text-sub); 
+            text-transform: uppercase; margin: 24px 0 8px 8px; 
+            letter-spacing: 0.05em; font-weight: 700;
+        }
+
+        /* --- MODERN LIST & ROWS --- */
+        .ios-list { 
+            background: var(--card); border-radius: 16px; 
+            overflow: hidden; margin-bottom: 16px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .ios-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 16px; min-height: 54px; 
+            border-bottom: 1px solid var(--border); 
+            transition: background 0.2s;
+        }
+        .ios-row:last-child { border-bottom: none; }
+        .ios-row label { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+
+        .cfg-row { 
+            display: flex; align-items: center; gap: 12px; font-size: 14px; 
+            padding: 12px 16px 12px 48px; background: #FAFBFC; 
+            border-bottom: 1px solid var(--border); 
+        }
+        .cfg-row:last-child { border-bottom: none; }
+        .cfg-row span { flex-grow: 1; color: var(--text-sub); font-weight: 500; }
+
+        /* --- CUSTOM FORM ELEMENTS --- */
+        select, input[type="number"] { 
+            border: 1px solid var(--border); background: var(--input-bg); 
+            padding: 8px 12px; border-radius: 10px; 
+            font-size: 15px; color: var(--text-main); 
+            font-weight: 600; outline: none; width: 70px;
+            text-align: center; font-family: inherit;
+        }
+        select:focus, input[type="number"]:focus { border-color: var(--accent); background: #fff; }
+
+        /* Mooiere custom checkbox (Toggle style) */
+        input[type="checkbox"] {
+            appearance: none;
+            width: 44px; height: 24px;
+            background: #CBD5E1;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        input[type="checkbox"]:checked { background: #10B981; }
+        input[type="checkbox"]::before {
+            content: "";
+            position: absolute; width: 20px; height: 20px;
+            border-radius: 50%; top: 2px; left: 2px;
+            background: white;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        input[type="checkbox"]:checked::before { transform: translateX(20px); }
+
+        /* --- BUTTONS --- */
+        .btn-main { 
+            background: var(--primary); color: white; border: none; 
+            width: 100%; padding: 18px; border-radius: 16px; 
+            font-size: 16px; font-weight: 600; margin-top: 12px; 
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .btn-main:active { transform: translateY(1px); box-shadow: none; }
+        .btn-success { background: var(--accent); }
+
+        /* --- WERKBLAD STYLE --- */
         #werkblad { display: none; background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; font-family: var(--kid-font); color: #1a1a1a; }
         .wb-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
         .section { margin-bottom: 15px; border: 2px solid #f0f0f0; padding: 12px; border-radius: 15px; page-break-inside: avoid; }
         .section-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #eee; }
         
-        /* Wiskunde / Grid */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 20px; }
         .som-box { padding: 5px 0; letter-spacing: 1px; }
 
-        /* Splitsingen */
         .splits-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
         .splits-box { display: flex; flex-direction: column; align-items: center; scale: 0.85; }
         .top-circle { border: 2.5px solid #000; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
@@ -55,23 +135,19 @@
         .onder-box { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
         .mini-invul { border-bottom: 2px solid #000; width: 25px; height: 22px; text-align: center; font-size: 18px; }
 
-        /* Brug over 10 Layout */
         .brug-item { display: inline-block; margin-bottom: 30px; width: 160px; font-size: 20px; }
         .brug-som { margin-bottom: 5px; }
         .brug-benen-container { margin-left: 38px; display: flex; flex-direction: column; align-items: center; width: 40px; }
         .brug-onder { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
 
-        /* Rekenslang */
-        .slang-container { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: #fafafa; padding: 12px; border-radius: 12px; }
+        .slang-container { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: #fafafa; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
         .slang-bol { width: 38px; height: 38px; border: 2.5px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: white; }
 
-        /* Lezen & Schrijven */
         .lees-zin { font-size: 19px; margin-bottom: 8px; font-weight: bold; }
         .schrijf-regel { height: 52px; position: relative; margin-bottom: 22px; width: 100%; }
         .lijn { position: absolute; left: 0; right: 0; border-bottom: 1px solid var(--line-color); }
         .dak { top: 0px; } .plafond { top: 17px; border-bottom-style: dashed; } .vloer { top: 34px; border-bottom: 1.5px solid var(--floor-color); } .kelder { top: 51px; }
 
-        /* Vraagstukken */
         .vraagstuk-item { margin-bottom: 30px; font-size: 18px; page-break-inside: avoid; font-family: var(--kid-font); }
         .vraagstuk-tekst { margin-bottom: 12px; line-height: 1.5; font-style: italic; }
         .vraagstuk-oplossing { border: 1.5px solid #eee; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; }
@@ -88,43 +164,73 @@
             <h1>Huiswerk Maker</h1>
         </div>
         <div class="ios-list">
-            <div class="ios-row" onclick="showScreen('wiskunde')"><label>🔢 Wiskunde</label><span>❯</span></div>
-            <div class="ios-row" onclick="showScreen('lezen')"><label>📖 Lezen & Schrijven</label><span>❯</span></div>
-            <div class="ios-row" onclick="showScreen('vraagstukken')"><label>💡 Vraagstukken</label><span>❯</span></div>
+            <div class="ios-row" onclick="showScreen('wiskunde')"><label>🔢 Wiskunde</label><span style="color:var(--text-sub)">❯</span></div>
+            <div class="ios-row" onclick="showScreen('lezen')"><label>📖 Lezen & Schrijven</label><span style="color:var(--text-sub)">❯</span></div>
+            <div class="ios-row" onclick="showScreen('vraagstukken')"><label>💡 Vraagstukken</label><span style="color:var(--text-sub)">❯</span></div>
         </div>
     </div>
 
     <div id="wiskunde" class="slide" style="display:none">
         <p class="group-label">Instellingen</p>
         <div class="ios-list">
-            <div class="ios-row"><label>Bereik</label>
+            <div class="ios-row"><label>Getalbereik</label>
                 <select id="range" onchange="checkRange()">
-                    <option value="10" selected>0 tot 10</option>
-                    <option value="20">0 tot 20</option>
-                    <option value="100">0 tot 100</option>
+                    <option value="10" selected>0 - 10</option>
+                    <option value="20">0 - 20</option>
+                    <option value="100">0 - 100</option>
                 </select>
             </div>
-            <div id="brugRow" class="ios-row" style="display:none"><label>Brug over 10 (splitsing)</label><input type="checkbox" id="checkBrug"></div>
+            <div id="brugRow" style="display:none; flex-direction: column;">
+                <div class="ios-row"><label>Brug over 10</label><input type="checkbox" id="checkBrug" onchange="toggle('brugCfg')"></div>
+                <div id="brugCfg" style="display:none;">
+                    <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numBrug" value="6"></div>
+                    <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullBrug"></div>
+                </div>
+            </div>
         </div>
         <p class="group-label">Oefeningen</p>
         <div class="ios-list">
             <div class="ios-row"><label>Plus & Min</label><input type="checkbox" id="checkPM" checked onchange="toggle('pmCfg')"></div>
-            <div id="pmCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Aantal</span><input type="number" id="numPM" value="12"></div></div>
+            <div id="pmCfg" style="display:block;">
+                <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numPM" value="12"></div>
+                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullPM"></div>
+            </div>
+
             <div class="ios-row"><label>Invullen (..+5=9)</label><input type="checkbox" id="checkFill" onchange="toggle('fillCfg')"></div>
-            <div id="fillCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Aantal</span><input type="number" id="numFill" value="8"></div></div>
-            <div class="ios-row"><label>Standaard Splitsingen</label><input type="checkbox" id="checkSplits" onchange="toggle('spCfg')"></div>
-            <div id="spCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Aantal</span><input type="number" id="numSplits" value="6"></div></div>
+            <div id="fillCfg" style="display:none;">
+                <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numFill" value="8"></div>
+                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullFill"></div>
+            </div>
+
+            <div class="ios-row"><label>Splitsingen</label><input type="checkbox" id="checkSplits" onchange="toggle('spCfg')"></div>
+            <div id="spCfg" style="display:none;">
+                <div class="cfg-row"><span>Aantal splitsingen</span><input type="number" id="numSplits" value="6"></div>
+                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullSplits"></div>
+            </div>
+
             <div class="ios-row"><label>Rekenslang 🐍</label><input type="checkbox" id="checkSL" onchange="toggle('slCfg')"></div>
-            <div id="slCfg" style="display:none; padding-left:20px;"><div class="ios-row"><span>Bollen</span><input type="number" id="lenSL" value="5"></div></div>
+            <div id="slCfg" style="display:none;">
+                <div class="cfg-row"><span>Aantal slangen</span><input type="number" id="numSL" value="1"></div>
+                <div class="cfg-row"><span>Bollen per slang</span><input type="number" id="lenSL" value="5"></div>
+                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullSL"></div>
+            </div>
+            
+            <div id="multiRow" style="display:none; flex-direction: column;">
+                <div class="ios-row"><label>Maaltafels ✖️</label><input type="checkbox" id="checkMulti" onchange="toggle('multiCfg')"></div>
+                <div id="multiCfg" style="display:none;">
+                    <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numMulti" value="12"></div>
+                    <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullMulti"></div>
+                </div>
+            </div>
         </div>
         <button class="btn-main btn-success" onclick="generate('math')">Maak Werkblad ✨</button>
-        <button class="btn-main" onclick="showScreen('home')">Terug</button>
+        <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug naar menu</button>
     </div>
 
     <div id="lezen" class="slide" style="display:none">
-        <p class="group-label">Leesniveau</p>
+        <p class="group-label">Niveau</p>
         <div class="ios-list">
-            <div class="ios-row"><label>Selecteer AVI</label>
+            <div class="ios-row"><label>AVI Niveau</label>
                 <select id="aviLevel">
                     <option value="avi1">AVI Start</option>
                     <option value="avi2">AVI M3</option>
@@ -133,28 +239,28 @@
             </div>
         </div>
         <button class="btn-main btn-success" onclick="generate('readwrite')">Maak Werkblad ✨</button>
-        <button class="btn-main" onclick="showScreen('home')">Terug</button>
+        <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug</button>
     </div>
 
     <div id="vraagstukken" class="slide" style="display:none">
         <p class="group-label">Instellingen</p>
         <div class="ios-list">
-            <div class="ios-row"><label>Bereik</label>
+            <div class="ios-row"><label>Getallen tot</label>
                 <select id="v-range">
-                    <option value="10">0 tot 10</option>
-                    <option value="20" selected>0 tot 20</option>
-                    <option value="100">0 tot 100</option>
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="100">100</option>
                 </select>
             </div>
         </div>
         <button class="btn-main btn-success" onclick="generate('stories')">Maak Werkblad ✨</button>
-        <button class="btn-main" onclick="showScreen('home')">Terug</button>
+        <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug</button>
     </div>
 </div>
 
 <div id="werkblad">
     <div class="no-print wb-controls">
-        <button class="btn-main" style="margin:0; width:140px; background:#FF3B30" onclick="goBack()">❮ Terug</button>
+        <button class="btn-main" style="margin:0; width:140px; background:#EF4444; box-shadow:none;" onclick="goBack()">❮ Terug</button>
         <button class="btn-main btn-success" style="margin:0; width:140px;" onclick="window.print()">Printen 🖨️</button>
     </div>
     <div style="border-bottom:3px solid #000; padding-bottom:8px; margin-bottom:20px; display:flex; justify-content:space-between; font-weight:bold; font-size:18px;">
@@ -190,11 +296,17 @@
 
     function toggle(id) {
         const el = document.getElementById(id);
-        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
     }
 
     function checkRange() {
-        document.getElementById('brugRow').style.display = (document.getElementById('range').value !== "10") ? 'flex' : 'none';
+        const range = document.getElementById('range').value;
+        document.getElementById('brugRow').style.display = (range !== "10") ? 'flex' : 'none';
+        document.getElementById('multiRow').style.display = (range === "100") ? 'flex' : 'none';
+        if(range !== "100") {
+            document.getElementById('checkMulti').checked = false;
+            document.getElementById('multiCfg').style.display = 'none';
+        }
     }
 
     function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -209,66 +321,102 @@
             document.getElementById('wb-titel').innerText = "Wiskunde";
             const range = parseInt(document.getElementById('range').value);
             
-            if(document.getElementById('checkBrug').checked && range >= 20) {
-                let h = `<div class="section"><div class="section-title">Rekenen met de brug</div><div style="display:flex; flex-wrap:wrap; gap:15px;">`;
-                for(let i=0; i<6; i++){
-                    let a=getRandom(6,9), b=getRandom(range/2-2, range/2);
-                    h += `<div class="brug-item">
-                            <div class="brug-som">${a} + ${b} = __</div>
-                            <div class="brug-benen-container">
-                                <div class="benen"></div>
-                                <div class="brug-onder">
-                                    <div class="mini-invul"></div>
-                                    <div class="mini-invul"></div>
-                                </div>
-                            </div>
-                          </div>`;
-                }
-                inhoud.innerHTML += h + `</div></div>`;
-            }
+            const activeTasks = [];
+            if(document.getElementById('checkBrug').checked) activeTasks.push({id: 'Brug', full: document.getElementById('fullBrug').checked, numId: 'numBrug'});
+            if(document.getElementById('checkPM').checked) activeTasks.push({id: 'PM', full: document.getElementById('fullPM').checked, numId: 'numPM'});
+            if(document.getElementById('checkFill').checked) activeTasks.push({id: 'Fill', full: document.getElementById('fullFill').checked, numId: 'numFill'});
+            if(document.getElementById('checkSplits').checked) activeTasks.push({id: 'Splits', full: document.getElementById('fullSplits').checked, numId: 'numSplits'});
+            if(document.getElementById('checkSL').checked) activeTasks.push({id: 'SL', full: document.getElementById('fullSL').checked, numId: 'numSL'});
+            if(document.getElementById('checkMulti').checked && range === 100) activeTasks.push({id: 'Multi', full: document.getElementById('fullMulti').checked, numId: 'numMulti'});
 
-            if(document.getElementById('checkPM').checked) {
-                let n = parseInt(document.getElementById('numPM').value);
-                let h = `<div class="section"><div class="section-title">Bewerkingen</div><div class="grid">`;
-                for(let i=0; i<n; i++) {
-                    if(Math.random()>0.5){ let a=getRandom(0, range), b=getRandom(0, range-a); h += `<div class="som-box">${a}+${b}=__</div>`; }
-                    else { let a=getRandom(0, range), b=getRandom(0, a); h += `<div class="som-box">${a}-${b}=__</div>`; }
-                }
-                inhoud.innerHTML += h + `</div></div>`;
-            }
+            const fullTasks = activeTasks.filter(t => t.full);
+            const fixedTasks = activeTasks.filter(t => !t.full);
+            
+            let totalFixedUnits = fixedTasks.length * 2; 
+            let availableUnits = 24 - totalFixedUnits; 
+            let unitsPerFullTask = fullTasks.length > 0 ? Math.floor(availableUnits / fullTasks.length) : 0;
 
-            if(document.getElementById('checkFill').checked) {
-                let n = parseInt(document.getElementById('numFill').value);
-                let h = `<div class="section"><div class="section-title">Vul de som aan</div><div class="grid">`;
-                for(let i=0; i<n; i++){
-                    let res=getRandom(5, range), a=getRandom(1, res-1);
-                    h += `<div class="som-box">${a}+__=${res}</div>`;
+            activeTasks.forEach(task => {
+                let count = parseInt(document.getElementById(task.numId).value);
+                if(task.full) {
+                    if(task.id === 'PM' || task.id === 'Fill' || task.id === 'Multi') count = unitsPerFullTask * 4;
+                    if(task.id === 'Splits') count = unitsPerFullTask * 3;
+                    if(task.id === 'Brug') count = unitsPerFullTask * 2;
+                    if(task.id === 'SL') count = Math.max(1, Math.floor(unitsPerFullTask / 2));
                 }
-                inhoud.innerHTML += h + `</div></div>`;
-            }
 
-            if(document.getElementById('checkSplits').checked) {
-                let n = parseInt(document.getElementById('numSplits').value);
-                let h = `<div class="section"><div class="section-title">Splitsen</div><div class="splits-grid">`;
-                for(let i=0; i<n; i++){
-                    let t=getRandom(2, range), l=getRandom(0, t);
-                    h += `<div class="splits-box"><div class="top-circle">${t}</div><div class="benen"></div><div class="onder-box"><div class="mini-invul">${l}</div><div class="mini-invul"></div></div></div>`;
+                if(task.id === 'Brug') {
+                    let h = `<div class="section"><div class="section-title">Rekenen met de brug</div><div style="display:flex; flex-wrap:wrap; gap:15px;">`;
+                    for(let i=0; i<count; i++){
+                        let a=getRandom(6,9), b=getRandom(range/2-2, range/2);
+                        h += `<div class="brug-item"><div class="brug-som">${a} + ${b} = __</div><div class="brug-benen-container"><div class="benen"></div><div class="brug-onder"><div class="mini-invul"></div><div class="mini-invul"></div></div></div></div>`;
+                    }
+                    inhoud.innerHTML += h + `</div></div>`;
                 }
-                inhoud.innerHTML += h + `</div></div>`;
-            }
 
-            if(document.getElementById('checkSL').checked) {
-                let len = parseInt(document.getElementById('lenSL').value);
-                let cur = getRandom(1, range/2);
-                let h = `<div class="section"><div class="section-title">Rekenslang</div><div class="slang-container"><div class="slang-bol">${cur}</div>`;
-                for(let i=0; i<len-1; i++){
-                    let op=Math.random()>0.5?'+':'-', v=getRandom(1,Math.floor(range/10)+2);
-                    if(op==='+' && cur+v>range) op='-'; if(op==='-' && cur-v<0) op='+';
-                    cur=(op==='+')?cur+v:cur-v;
-                    h += `<span>(${op}${v})➔</span><div class="slang-bol"></div>`;
+                if(task.id === 'PM') {
+                    let h = `<div class="section"><div class="section-title">Bewerkingen</div><div class="grid">`;
+                    for(let i=0; i<count; i++) {
+                        if(Math.random()>0.5){ let a=getRandom(0, range), b=getRandom(0, range-a); h += `<div class="som-box">${a}+${b}=__</div>`; }
+                        else { let a=getRandom(0, range), b=getRandom(0, a); h += `<div class="som-box">${a}-${b}=__</div>`; }
+                    }
+                    inhoud.innerHTML += h + `</div></div>`;
                 }
-                inhoud.innerHTML += h + `</div></div>`;
-            }
+
+                if(task.id === 'Fill') {
+                    let h = `<div class="section"><div class="section-title">Vul de som aan</div><div class="grid">`;
+                    for(let i=0; i<count; i++){
+                        if(Math.random() > 0.5) {
+                            let res=getRandom(5, range), a=getRandom(1, res-1);
+                            h += `<div class="som-box">${a}+__=${res}</div>`;
+                        } else {
+                            if(Math.random() > 0.5) {
+                                let a = getRandom(5, range), res = getRandom(1, a - 1);
+                                h += `<div class="som-box">${a}-__=${res}</div>`;
+                            } else {
+                                let res = getRandom(2, range - 5), b = getRandom(1, 5);
+                                h += `<div class="som-box">__-${b}=${res}</div>`;
+                            }
+                        }
+                    }
+                    inhoud.innerHTML += h + `</div></div>`;
+                }
+
+                if(task.id === 'Splits') {
+                    let h = `<div class="section"><div class="section-title">Splitsen</div><div class="splits-grid">`;
+                    for(let i=0; i<count; i++){
+                        let t=getRandom(2, range), l=getRandom(0, t);
+                        h += `<div class="splits-box"><div class="top-circle">${t}</div><div class="benen"></div><div class="onder-box"><div class="mini-invul">${l}</div><div class="mini-invul"></div></div></div>`;
+                    }
+                    inhoud.innerHTML += h + `</div></div>`;
+                }
+
+                if(task.id === 'SL') {
+                    let h = `<div class="section"><div class="section-title">Rekenslangen</div>`;
+                    for(let s=0; s<count; s++) {
+                        let len = parseInt(document.getElementById('lenSL').value);
+                        let cur = getRandom(1, range/2);
+                        h += `<div class="slang-container"><div class="slang-bol">${cur}</div>`;
+                        for(let i=0; i<len-1; i++){
+                            let op=Math.random()>0.5?'+':'-', v=getRandom(1,Math.floor(range/10)+2);
+                            if(op==='+' && cur+v>range) op='-'; if(op==='-' && cur-v<0) op='+';
+                            cur=(op==='+')?cur+v:cur-v;
+                            h += `<span>(${op}${v})➔</span><div class="slang-bol"></div>`;
+                        }
+                        h += `</div>`;
+                    }
+                    inhoud.innerHTML += h + `</div>`;
+                }
+
+                if(task.id === 'Multi') {
+                    let h = `<div class="section"><div class="section-title">Maaltafels</div><div class="grid">`;
+                    for(let i=0; i<count; i++) {
+                        let a = getRandom(1, 10), b = getRandom(1, 10);
+                        h += `<div class="som-box">${a} x ${b} = __</div>`;
+                    }
+                    inhoud.innerHTML += h + `</div></div>`;
+                }
+            });
         } 
         else if(type === 'readwrite') {
             document.getElementById('wb-titel').innerText = "Lezen & Schrijven";

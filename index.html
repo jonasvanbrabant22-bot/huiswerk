@@ -1,446 +1,1215 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Huiswerk Maker Pro</title>
-    
-    <link rel="apple-touch-icon" href="huiswerk.jpeg">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link href="https://fonts.googleapis.com/css2?family=Andika&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Huiswerk Maker Pro</title>
+<link rel="apple-touch-icon" href="huiswerk.jpeg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Andika&family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #3A3F47;
+  --accent: #6366F1;
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --text-main: #1E293B;
+  --text-sub: #64748B;
+  --border: #E2E8F0;
+  --input-bg: #F1F5F9;
+  --kid-font: 'Andika', sans-serif;
+  --fun-font: 'Baloo 2', cursive;
+  --line-color: #AED6F1;
+  --floor-color: #5DADE2;
+}
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background-color: var(--bg);
+  margin: 0;
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
 
-    <style>
-        :root {
-            --primary: #3A3F47; /* Modern antraciet ipv fel blauw */
-            --accent: #6366F1;  /* Zacht Indigo voor subtiele accenten */
-            --bg: #F8FAFC;
-            --card: #FFFFFF;
-            --text-main: #1E293B;
-            --text-sub: #64748B;
-            --border: #E2E8F0;
-            --input-bg: #F1F5F9;
-            --kid-font: 'Andika', sans-serif;
-            --line-color: #AED6F1;
-            --floor-color: #5DADE2;
-        }
+/* --- UI CONTAINER --- */
+.app-container { max-width: 430px; margin: 0 auto; padding: 20px 16px; }
+.header { text-align: center; margin: 40px 0 24px 0; }
+.app-icon {
+  width: 90px; height: 90px; border-radius: 22px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  margin-bottom: 16px; object-fit: cover;
+}
+h1 { font-size: 24px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; }
+.group-label {
+  font-size: 12px; color: var(--text-sub);
+  text-transform: uppercase; margin: 24px 0 8px 8px;
+  letter-spacing: 0.05em; font-weight: 700;
+}
 
-        body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-        }
+/* --- SEGMENTED CONTROL (leerjaar) --- */
+.segmented {
+  display: flex; background: var(--input-bg); border-radius: 14px;
+  padding: 4px; gap: 4px; margin-bottom: 4px;
+  border: 1px solid var(--border);
+}
+.segmented button {
+  flex: 1; border: none; background: transparent; padding: 10px 0;
+  border-radius: 10px; font-size: 14px; font-weight: 600;
+  color: var(--text-sub); cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+}
+.segmented button.active {
+  background: var(--card); color: var(--text-main);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
 
-        /* --- UI CONTAINER --- */
-        .app-container { max-width: 430px; margin: 0 auto; padding: 20px 16px; }
-        
-        .header { text-align: center; margin: 40px 0 30px 0; }
-        .app-icon { 
-            width: 90px; height: 90px; border-radius: 22px; 
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
-            margin-bottom: 16px; object-fit: cover;
-        }
-        
-        h1 { font-size: 24px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; }
+/* --- THEMA PICKER --- */
+.theme-row { display: flex; gap: 8px; justify-content: space-between; }
+.theme-chip {
+  flex: 1; text-align: center; background: var(--card); border: 2px solid var(--border);
+  border-radius: 14px; padding: 10px 0 6px 0; cursor: pointer; transition: all 0.2s;
+}
+.theme-chip .t-emoji { font-size: 24px; display: block; }
+.theme-chip .t-name { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.04em; }
+.theme-chip.active { border-color: var(--accent); background: #EEF2FF; }
 
-        .group-label { 
-            font-size: 12px; color: var(--text-sub); 
-            text-transform: uppercase; margin: 24px 0 8px 8px; 
-            letter-spacing: 0.05em; font-weight: 700;
-        }
+/* --- MODERN LIST & ROWS --- */
+.ios-list {
+  background: var(--card); border-radius: 16px;
+  overflow: hidden; margin-bottom: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+}
+.ios-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px; min-height: 54px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.ios-row:last-child { border-bottom: none; }
+.ios-row label { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+.cfg-row {
+  display: flex; align-items: center; gap: 12px; font-size: 14px;
+  padding: 12px 16px 12px 48px; background: #FAFBFC;
+  border-bottom: 1px solid var(--border);
+}
+.cfg-row:last-child { border-bottom: none; }
+.cfg-row span { flex-grow: 1; color: var(--text-sub); font-weight: 500; }
 
-        /* --- MODERN LIST & ROWS --- */
-        .ios-list { 
-            background: var(--card); border-radius: 16px; 
-            overflow: hidden; margin-bottom: 16px; 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
+/* --- TAFEL CHIPS --- */
+.tafel-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px 12px 48px; background: #FAFBFC; border-bottom: 1px solid var(--border); }
+.tafel-chip {
+  width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--border);
+  background: var(--card); font-weight: 700; font-size: 14px; color: var(--text-sub);
+  cursor: pointer; font-family: inherit;
+}
+.tafel-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
 
-        .ios-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 16px; min-height: 54px; 
-            border-bottom: 1px solid var(--border); 
-            transition: background 0.2s;
-        }
-        .ios-row:last-child { border-bottom: none; }
-        .ios-row label { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+/* --- CUSTOM FORM ELEMENTS --- */
+select, input[type="number"] {
+  border: 1px solid var(--border); background: var(--input-bg);
+  padding: 8px 12px; border-radius: 10px;
+  font-size: 15px; color: var(--text-main);
+  font-weight: 600; outline: none; width: 90px;
+  text-align: center; font-family: inherit;
+}
+select:focus, input[type="number"]:focus { border-color: var(--accent); background: #fff; }
+input[type="checkbox"] {
+  appearance: none;
+  width: 44px; height: 24px; min-width: 44px;
+  background: #CBD5E1;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+input[type="checkbox"]:checked { background: #10B981; }
+input[type="checkbox"]::before {
+  content: "";
+  position: absolute; width: 20px; height: 20px;
+  border-radius: 50%; top: 2px; left: 2px;
+  background: white;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+input[type="checkbox"]:checked::before { transform: translateX(20px); }
 
-        .cfg-row { 
-            display: flex; align-items: center; gap: 12px; font-size: 14px; 
-            padding: 12px 16px 12px 48px; background: #FAFBFC; 
-            border-bottom: 1px solid var(--border); 
-        }
-        .cfg-row:last-child { border-bottom: none; }
-        .cfg-row span { flex-grow: 1; color: var(--text-sub); font-weight: 500; }
+/* --- BUTTONS --- */
+.btn-main {
+  background: var(--primary); color: white; border: none;
+  width: 100%; padding: 18px; border-radius: 16px;
+  font-size: 16px; font-weight: 600; margin-top: 12px;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  font-family: inherit;
+}
+.btn-main:active { transform: translateY(1px); box-shadow: none; }
+.btn-success { background: var(--accent); }
 
-        /* --- CUSTOM FORM ELEMENTS --- */
-        select, input[type="number"] { 
-            border: 1px solid var(--border); background: var(--input-bg); 
-            padding: 8px 12px; border-radius: 10px; 
-            font-size: 15px; color: var(--text-main); 
-            font-weight: 600; outline: none; width: 90px; /* VERGROOT VOOR BETERE PASVORM */
-            text-align: center; font-family: inherit;
-        }
-        select:focus, input[type="number"]:focus { border-color: var(--accent); background: #fff; }
+/* =========================================================
+   WERKBLAD (print)
+   ========================================================= */
+#werkblad { display: block; background: white; width: 210mm; min-height: 297mm; margin: 0; padding: 12mm 14mm; box-sizing: border-box; font-family: var(--kid-font); color: #1a1a1a; transform-origin: top left; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+#wb-zoom { margin: 0 auto; overflow: hidden; }
+.wb-controls { display: flex; gap: 10px; justify-content: center; margin: 16px 0 20px 0; }
 
-        /* Mooiere custom checkbox (Toggle style) */
-        input[type="checkbox"] {
-            appearance: none;
-            width: 44px; height: 24px;
-            background: #CBD5E1;
-            border-radius: 20px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        input[type="checkbox"]:checked { background: #10B981; }
-        input[type="checkbox"]::before {
-            content: "";
-            position: absolute; width: 20px; height: 20px;
-            border-radius: 50%; top: 2px; left: 2px;
-            background: white;
-            transition: transform 0.3s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        input[type="checkbox"]:checked::before { transform: translateX(20px); }
+.wb-banner {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 22px; letter-spacing: 6px; margin-bottom: 6px;
+}
+.wb-head {
+  border: 3px solid #1a1a1a; border-radius: 18px;
+  padding: 10px 16px; margin-bottom: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.wb-titel { font-family: var(--fun-font); font-size: 26px; font-weight: 700; }
+.wb-meta { font-size: 16px; text-align: right; line-height: 1.7; }
 
-        /* --- BUTTONS --- */
-        .btn-main { 
-            background: var(--primary); color: white; border: none; 
-            width: 100%; padding: 18px; border-radius: 16px; 
-            font-size: 16px; font-weight: 600; margin-top: 12px; 
-            cursor: pointer; transition: all 0.2s;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-        }
-        .btn-main:active { transform: translateY(1px); box-shadow: none; }
-        .btn-success { background: var(--accent); }
+.section { margin-bottom: 14px; border: 2.5px solid var(--sec-color, #CBD5E1); padding: 12px 14px; border-radius: 16px; page-break-inside: avoid; break-inside: avoid; position: relative; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px dashed var(--sec-color, #ddd); padding-bottom: 6px; margin-bottom: 10px; }
+.section-title { font-family: var(--fun-font); font-size: 19px; font-weight: 700; }
+.section-stars { font-size: 20px; color: #94A3B8; letter-spacing: 3px; }
+.section-tip { font-size: 13px; color: #555; margin: -6px 0 8px 0; font-style: italic; }
 
-        /* --- WERKBLAD STYLE --- */
-        #werkblad { display: none; background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; font-family: var(--kid-font); color: #1a1a1a; }
-        .wb-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-        .section { margin-bottom: 15px; border: 2px solid #f0f0f0; padding: 12px; border-radius: 15px; page-break-inside: avoid; }
-        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #eee; }
-        
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 20px; }
-        .som-box { padding: 5px 0; letter-spacing: 1px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 10px; font-size: 20px; }
+.som-box { padding: 4px 0; letter-spacing: 1px; white-space: nowrap; }
 
-        .splits-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-        .splits-box { display: flex; flex-direction: column; align-items: center; scale: 0.85; }
-        .top-circle { border: 2.5px solid #000; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
-        .benen { width: 40px; height: 20px; border-top: 2.5px solid #000; position: relative; margin-top: 4px; }
-        .benen::before, .benen::after { content:''; position:absolute; height:20px; border-left:2.5px solid #000; top:0; }
-        .benen::before { left:0; transform: skewX(-25deg); } .benen::after { right:0; transform: skewX(25deg); }
-        .onder-box { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
-        .mini-invul { border-bottom: 2px solid #000; width: 25px; height: 22px; text-align: center; font-size: 18px; }
+.splits-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.splits-box { display: flex; flex-direction: column; align-items: center; scale: 0.85; }
+.top-circle { border: 2.5px solid #000; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
+.benen { width: 40px; height: 20px; border-top: 2.5px solid #000; position: relative; margin-top: 4px; }
+.benen::before, .benen::after { content:''; position:absolute; height:20px; border-left:2.5px solid #000; top:0; }
+.benen::before { left:0; transform: skewX(-25deg); } .benen::after { right:0; transform: skewX(25deg); }
+.onder-box { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
+.mini-invul { border-bottom: 2px solid #000; width: 25px; height: 22px; text-align: center; font-size: 18px; }
 
-        .brug-item { display: inline-block; margin-bottom: 30px; width: 160px; font-size: 20px; }
-        .brug-som { margin-bottom: 5px; }
-        .brug-benen-container { margin-left: 38px; display: flex; flex-direction: column; align-items: center; width: 40px; }
-        .brug-onder { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
+.brug-item { display: inline-block; margin-bottom: 24px; width: 160px; font-size: 20px; }
+.brug-som { margin-bottom: 5px; }
+.brug-benen-container { margin-left: 38px; display: flex; flex-direction: column; align-items: center; width: 40px; }
+.brug-onder { display: flex; justify-content: space-between; width: 65px; margin-top: 2px; }
 
-        .slang-container { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: #fafafa; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-        .slang-bol { width: 38px; height: 38px; border: 2.5px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: white; }
+.slang-container { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: #fafafa; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+.slang-bol { width: 38px; height: 38px; border: 2.5px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; background: white; }
 
-        .lees-zin { font-size: 19px; margin-bottom: 8px; font-weight: bold; }
-        .schrijf-regel { height: 52px; position: relative; margin-bottom: 22px; width: 100%; }
-        .lijn { position: absolute; left: 0; right: 0; border-bottom: 1px solid var(--line-color); }
-        .dak { top: 0px; } .plafond { top: 17px; border-bottom-style: dashed; } .vloer { top: 34px; border-bottom: 1.5px solid var(--floor-color); } .kelder { top: 51px; }
+/* Getallenrij */
+.rij-container { display: flex; align-items: center; gap: 0; margin-bottom: 12px; flex-wrap: wrap; }
+.rij-vak { width: 44px; height: 36px; border: 2.5px solid #000; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; background: white; }
+.rij-vak.leeg { background: #FFFBEB; }
+.rij-pijl { font-size: 14px; padding: 0 3px; color: #555; }
+.rij-sprong { font-size: 13px; font-weight: bold; margin-left: 8px; color: #555; }
 
-        .vraagstuk-item { margin-bottom: 30px; font-size: 18px; page-break-inside: avoid; font-family: var(--kid-font); }
-        .vraagstuk-tekst { margin-bottom: 12px; line-height: 1.5; font-style: italic; }
-        .vraagstuk-oplossing { border: 1.5px solid #eee; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; }
+/* Vergelijken */
+.verg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 10px; font-size: 22px; }
+.verg-item { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.verg-bol { width: 34px; height: 34px; border: 2.5px dashed #000; border-radius: 50%; }
 
-        @media print { .no-print { display: none !important; } #werkblad { display: block !important; margin: 0; padding: 5mm; } }
-    </style>
+/* Klok */
+.klok-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; justify-items: center; }
+.klok-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.klok-lijn { border-bottom: 2px solid #000; width: 90px; height: 24px; text-align: center; font-size: 15px; }
+
+/* Geld */
+.geld-item { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.munt { width: 40px; height: 40px; border-radius: 50%; border: 2.5px solid #B8860B; background: #FDF3D0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
+.munt.zilver { border-color: #708090; background: #F1F5F9; }
+.biljet { width: 60px; height: 34px; border-radius: 6px; border: 2.5px solid #2E7D32; background: #EDF7ED; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+.geld-antwoord { margin-left: auto; font-size: 18px; white-space: nowrap; }
+.geld-invul { display: inline-block; border-bottom: 2px solid #000; width: 70px; height: 22px; }
+
+/* Lezen */
+.lees-zin { font-size: 19px; margin-bottom: 8px; font-weight: bold; }
+.schrijf-regel { height: 52px; position: relative; margin-bottom: 22px; width: 100%; }
+.lijn { position: absolute; left: 0; right: 0; border-bottom: 1px solid var(--line-color); }
+.dak { top: 0px; } .plafond { top: 17px; border-bottom-style: dashed; } .vloer { top: 34px; border-bottom: 1.5px solid var(--floor-color); } .kelder { top: 51px; }
+
+/* Vraagstukken */
+.vraagstuk-item { margin-bottom: 24px; font-size: 18px; page-break-inside: avoid; break-inside: avoid; font-family: var(--kid-font); }
+.vraagstuk-tekst { margin-bottom: 12px; line-height: 1.5; }
+.vraagstuk-oplossing { border: 1.5px dashed #999; padding: 14px; border-radius: 10px; display: flex; justify-content: space-between; }
+
+/* Tekenvak (vult restruimte op de pagina) */
+.tekenvak { display: flex; align-items: flex-start; justify-content: center; font-family: var(--fun-font); font-size: 16px; color: #64748B; border-style: dashed; box-sizing: border-box; }
+
+/* Beloningsbon */
+#wb-onder { page-break-inside: avoid; break-inside: avoid; }
+.bon { border: 2.5px dashed #F59E0B; background: #FFFBEB; border-radius: 14px; padding: 10px 14px 10px 40px; margin-top: 18px; position: relative; display: flex; align-items: center; gap: 14px; }
+.bon::before { content: "✂️"; position: absolute; left: 10px; top: -13px; font-size: 16px; }
+.bon-label { font-family: var(--fun-font); font-weight: 700; font-size: 13px; color: #B45309; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; border-right: 2px dashed #F59E0B; padding-right: 14px; line-height: 1.4; }
+.bon-tekst { font-family: var(--fun-font); font-size: 16px; flex: 1; line-height: 1.4; }
+.bon-klein { font-size: 11px; color: #92400E; white-space: nowrap; text-align: right; line-height: 1.8; }
+
+/* Footer: mopje + sticker */
+.wb-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 18px; border-top: 2px dashed #CBD5E1; padding-top: 12px; page-break-inside: avoid; break-inside: avoid; }
+.mopje { font-size: 15px; line-height: 1.5; flex: 1; }
+.mopje b { font-family: var(--fun-font); }
+.sticker-vak { width: 86px; height: 86px; border: 3px dashed #94A3B8; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; color: #64748B; flex-shrink: 0; padding: 6px; box-sizing: border-box; }
+
+/* Verbetersleutel */
+#sleutel { page-break-before: always; padding-top: 10mm; }
+.sleutel-head { font-family: var(--fun-font); font-size: 22px; border-bottom: 3px solid #000; padding-bottom: 6px; margin-bottom: 14px; }
+.sleutel-sectie { margin-bottom: 12px; font-size: 14px; line-height: 1.8; }
+.sleutel-sectie b { font-family: var(--fun-font); font-size: 15px; }
+
+@media print {
+  .no-print { display: none !important; }
+  @page { size: A4 portrait; margin: 0; }
+  html, body { width: 210mm; }
+  #printview { display: block !important; }
+  #wb-zoom { height: auto !important; width: auto !important; overflow: visible; margin: 0; }
+  #werkblad { transform: none !important; margin: 0; padding: 10mm 12mm; width: auto; min-height: 0; box-shadow: none; }
+  body { background: white; }
+}
+</style>
 </head>
 <body>
 
 <div class="app-container no-print">
-    <div id="home" class="slide">
-        <div class="header">
-            <img src="huiswerk.jpeg" alt="Logo" class="app-icon">
-            <h1>Huiswerk Maker</h1>
-        </div>
-        <div class="ios-list">
-            <div class="ios-row" onclick="showScreen('wiskunde')"><label>🔢 Wiskunde</label><span style="color:var(--text-sub)">❯</span></div>
-            <div class="ios-row" onclick="showScreen('lezen')"><label>📖 Lezen & Schrijven</label><span style="color:var(--text-sub)">❯</span></div>
-            <div class="ios-row" onclick="showScreen('vraagstukken')"><label>💡 Vraagstukken</label><span style="color:var(--text-sub)">❯</span></div>
-        </div>
+
+  <!-- ===== HOME ===== -->
+  <div id="home" class="slide">
+    <div class="header">
+      <img src="huiswerk.jpeg" alt="Logo" class="app-icon" onerror="this.style.display='none'">
+      <h1>Huiswerk Maker</h1>
     </div>
 
-    <div id="wiskunde" class="slide" style="display:none">
-        <p class="group-label">Instellingen</p>
-        <div class="ios-list">
-            <div class="ios-row"><label>Getalbereik</label>
-                <select id="range" onchange="checkRange()">
-                    <option value="10" selected>0 - 10</option>
-                    <option value="20">0 - 20</option>
-                    <option value="100">0 - 100</option>
-                </select>
-            </div>
-            <div id="brugRow" style="display:none; flex-direction: column;">
-                <div class="ios-row"><label>Brug over 10</label><input type="checkbox" id="checkBrug" onchange="toggle('brugCfg')"></div>
-                <div id="brugCfg" style="display:none;">
-                    <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numBrug" value="6"></div>
-                    <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullBrug"></div>
-                </div>
-            </div>
-        </div>
-        <p class="group-label">Oefeningen</p>
-        <div class="ios-list">
-            <div class="ios-row"><label>Plus & Min</label><input type="checkbox" id="checkPM" checked onchange="toggle('pmCfg')"></div>
-            <div id="pmCfg" style="display:block;">
-                <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numPM" value="12"></div>
-                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullPM"></div>
-            </div>
-
-            <div class="ios-row"><label>Invullen (..+5=9)</label><input type="checkbox" id="checkFill" onchange="toggle('fillCfg')"></div>
-            <div id="fillCfg" style="display:none;">
-                <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numFill" value="8"></div>
-                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullFill"></div>
-            </div>
-
-            <div class="ios-row"><label>Splitsingen</label><input type="checkbox" id="checkSplits" onchange="toggle('spCfg')"></div>
-            <div id="spCfg" style="display:none;">
-                <div class="cfg-row"><span>Aantal splitsingen</span><input type="number" id="numSplits" value="6"></div>
-                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullSplits"></div>
-            </div>
-
-            <div class="ios-row"><label>Rekenslang 🐍</label><input type="checkbox" id="checkSL" onchange="toggle('slCfg')"></div>
-            <div id="slCfg" style="display:none;">
-                <div class="cfg-row"><span>Aantal slangen</span><input type="number" id="numSL" value="1"></div>
-                <div class="cfg-row"><span>Bollen per slang</span><input type="number" id="lenSL" value="5"></div>
-                <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullSL"></div>
-            </div>
-            
-            <div id="multiRow" style="display:none; flex-direction: column;">
-                <div class="ios-row"><label>Maaltafels ✖️</label><input type="checkbox" id="checkMulti" onchange="toggle('multiCfg')"></div>
-                <div id="multiCfg" style="display:none;">
-                    <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numMulti" value="12"></div>
-                    <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullMulti"></div>
-                </div>
-            </div>
-        </div>
-        <button class="btn-main btn-success" onclick="generate('math')">Maak Werkblad ✨</button>
-        <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug naar menu</button>
+    <p class="group-label">Leerjaar</p>
+    <div class="segmented" id="leerjaarSeg">
+      <button data-lj="1" onclick="setLeerjaar(1)">1e leerjaar</button>
+      <button data-lj="2" onclick="setLeerjaar(2)">2e leerjaar</button>
+      <button data-lj="3" onclick="setLeerjaar(3)">3e leerjaar</button>
     </div>
 
-    <div id="lezen" class="slide" style="display:none">
-        <p class="group-label">Niveau</p>
-        <div class="ios-list">
-            <div class="ios-row"><label>AVI Niveau</label>
-                <select id="aviLevel">
-                    <option value="avi1">AVI Start</option>
-                    <option value="avi2">AVI M3</option>
-                    <option value="avi3">AVI E3</option>
-                </select>
-            </div>
-        </div>
-        <button class="btn-main btn-success" onclick="generate('readwrite')">Maak Werkblad ✨</button>
-        <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug</button>
+    <p class="group-label">Thema van het werkblad</p>
+    <div class="theme-row" id="themeRow"></div>
+
+    <p class="group-label">Werkblad maken</p>
+    <div class="ios-list">
+      <div class="ios-row" onclick="showScreen('wiskunde')"><label>🔢 Wiskunde</label><span style="color:var(--text-sub)">❯</span></div>
+      <div class="ios-row" onclick="showScreen('lezen')"><label>📖 Lezen &amp; Schrijven</label><span style="color:var(--text-sub)">❯</span></div>
+      <div class="ios-row" onclick="showScreen('vraagstukken')"><label>💡 Vraagstukken</label><span style="color:var(--text-sub)">❯</span></div>
+      <div class="ios-row"><label>🔑 Verbetersleutel bij verrassingsblad</label><input type="checkbox" id="checkSleutelMix"></div>
+    </div>
+    <button class="btn-main btn-success" onclick="generateSurprise()">🎲 Verrassingsblad (automix)</button>
+  </div>
+
+  <!-- ===== WISKUNDE ===== -->
+  <div id="wiskunde" class="slide" style="display:none">
+    <p class="group-label">Instellingen</p>
+    <div class="ios-list">
+      <div class="ios-row"><label>Getalbereik</label>
+        <select id="range" onchange="checkRange()">
+          <option value="10">0 - 10</option>
+          <option value="20">0 - 20</option>
+          <option value="100">0 - 100</option>
+          <option value="1000">0 - 1000</option>
+        </select>
+      </div>
+      <div class="ios-row"><label>🔑 Verbetersleutel mee afdrukken</label><input type="checkbox" id="checkSleutel"></div>
     </div>
 
-    <div id="vraagstukken" class="slide" style="display:none">
-        <p class="group-label">Instellingen</p>
-        <div class="ios-list">
-            <div class="ios-row"><label>Getallen tot</label>
-                <select id="v-range">
-                    <option value="10">10</option>
-                    <option value="20" selected>20</option>
-                    <option value="100">100</option>
-                </select>
-            </div>
+    <p class="group-label">Oefeningen</p>
+    <div class="ios-list">
+
+      <div class="ios-row"><label>Plus &amp; Min</label><input type="checkbox" id="checkPM" checked onchange="toggle('pmCfg')"></div>
+      <div id="pmCfg" style="display:block;">
+        <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numPM" value="12" min="1" max="60"></div>
+        <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullPM"></div>
+      </div>
+
+      <div class="ios-row"><label>Invullen (..+5=9)</label><input type="checkbox" id="checkFill" onchange="toggle('fillCfg')"></div>
+      <div id="fillCfg" style="display:none;">
+        <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numFill" value="8" min="1" max="48"></div>
+        <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullFill"></div>
+      </div>
+
+      <div class="ios-row"><label>Splitsingen</label><input type="checkbox" id="checkSplits" onchange="toggle('spCfg')"></div>
+      <div id="spCfg" style="display:none;">
+        <div class="cfg-row"><span>Aantal splitsingen</span><input type="number" id="numSplits" value="6" min="1" max="36"></div>
+        <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullSplits"></div>
+      </div>
+
+      <div id="brugRow" style="display:none; flex-direction: column;">
+        <div class="ios-row"><label>Brug over het tiental</label><input type="checkbox" id="checkBrug" onchange="toggle('brugCfg')"></div>
+        <div id="brugCfg" style="display:none;">
+          <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numBrug" value="6" min="1" max="24"></div>
+          <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullBrug"></div>
         </div>
-        <button class="btn-main btn-success" onclick="generate('stories')">Maak Werkblad ✨</button>
-        <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug</button>
+      </div>
+
+      <div class="ios-row"><label>Rekenslang 🐍</label><input type="checkbox" id="checkSL" onchange="toggle('slCfg')"></div>
+      <div id="slCfg" style="display:none;">
+        <div class="cfg-row"><span>Aantal slangen</span><input type="number" id="numSL" value="2" min="1" max="8"></div>
+        <div class="cfg-row"><span>Bollen per slang</span><input type="number" id="lenSL" value="5" min="3" max="8"></div>
+      </div>
+
+      <div class="ios-row"><label>Getallenrij 🚂</label><input type="checkbox" id="checkRij" onchange="toggle('rijCfg')"></div>
+      <div id="rijCfg" style="display:none;">
+        <div class="cfg-row"><span>Aantal rijen</span><input type="number" id="numRij" value="4" min="1" max="10"></div>
+      </div>
+
+      <div class="ios-row"><label>Groter of kleiner ⚖️</label><input type="checkbox" id="checkVerg" onchange="toggle('vergCfg')"></div>
+      <div id="vergCfg" style="display:none;">
+        <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numVerg" value="9" min="1" max="30"></div>
+      </div>
+
+      <div class="ios-row"><label>Klokkijken 🕐</label><input type="checkbox" id="checkKlok" onchange="toggle('klokCfg')"></div>
+      <div id="klokCfg" style="display:none;">
+        <div class="cfg-row"><span>Aantal klokken</span><input type="number" id="numKlok" value="4" min="1" max="16"></div>
+        <div class="cfg-row"><span>Moeilijkheid</span>
+          <select id="klokLvl" style="width:130px">
+            <option value="heel">Uur</option>
+            <option value="half">Uur + half uur</option>
+            <option value="kwart">Met kwartieren</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="geldRow" style="display:none; flex-direction: column;">
+        <div class="ios-row"><label>Geld rekenen 💶</label><input type="checkbox" id="checkGeld" onchange="toggle('geldCfg')"></div>
+        <div id="geldCfg" style="display:none;">
+          <div class="cfg-row"><span>Aantal oefeningen</span><input type="number" id="numGeld" value="4" min="1" max="10"></div>
+          <div class="cfg-row"><span>Ook centen (50c)</span><input type="checkbox" id="geldCenten"></div>
+        </div>
+      </div>
+
+      <div id="multiRow" style="display:none; flex-direction: column;">
+        <div class="ios-row"><label>Maaltafels ✖️</label><input type="checkbox" id="checkMulti" onchange="toggle('multiCfg')"></div>
+        <div id="multiCfg" style="display:none;">
+          <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numMulti" value="12" min="1" max="60"></div>
+          <div class="cfg-row"><span>Pagina vullend</span><input type="checkbox" id="fullMulti"></div>
+          <div class="tafel-chips" id="tafelChips"></div>
+        </div>
+        <div class="ios-row"><label>Deeltafels ➗</label><input type="checkbox" id="checkDeel" onchange="toggle('deelCfg')"></div>
+        <div id="deelCfg" style="display:none;">
+          <div class="cfg-row"><span>Aantal sommen</span><input type="number" id="numDeel" value="8" min="1" max="48"></div>
+          <div class="cfg-row" style="padding-left:48px;"><span>Gebruikt dezelfde tafels als hierboven</span></div>
+        </div>
+      </div>
+
     </div>
+    <button class="btn-main btn-success" onclick="generate('math')">Maak Werkblad ✨</button>
+    <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug naar menu</button>
+  </div>
+
+  <!-- ===== LEZEN ===== -->
+  <div id="lezen" class="slide" style="display:none">
+    <p class="group-label">Niveau</p>
+    <div class="ios-list">
+      <div class="ios-row"><label>AVI Niveau</label>
+        <select id="aviLevel" style="width:120px">
+          <option value="avi1">AVI Start</option>
+          <option value="avi2">AVI M3</option>
+          <option value="avi3">AVI E3</option>
+          <option value="avi4">AVI M4</option>
+          <option value="avi5">AVI E4</option>
+        </select>
+      </div>
+      <div class="ios-row"><label>Aantal zinnen</label><input type="number" id="numZin" value="8" min="1" max="15"></div>
+    </div>
+    <button class="btn-main btn-success" onclick="generate('readwrite')">Maak Werkblad ✨</button>
+    <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug</button>
+  </div>
+
+  <!-- ===== VRAAGSTUKKEN ===== -->
+  <div id="vraagstukken" class="slide" style="display:none">
+    <p class="group-label">Instellingen</p>
+    <div class="ios-list">
+      <div class="ios-row"><label>Getallen tot</label>
+        <select id="v-range">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+      <div class="ios-row"><label>Aantal vraagstukken</label><input type="number" id="numVraag" value="4" min="1" max="15"></div>
+      <div id="vMultiRow" class="ios-row" style="display:none;"><label>Ook keer-vraagstukken ✖️</label><input type="checkbox" id="vMulti"></div>
+      <div class="ios-row"><label>🔑 Verbetersleutel mee afdrukken</label><input type="checkbox" id="checkSleutelV"></div>
+    </div>
+    <button class="btn-main btn-success" onclick="generate('stories')">Maak Werkblad ✨</button>
+    <button class="btn-main" style="background:#94A3B8; box-shadow:none;" onclick="showScreen('home')">Terug</button>
+  </div>
+
 </div>
 
-<div id="werkblad">
-    <div class="no-print wb-controls">
-        <button class="btn-main" style="margin:0; width:140px; background:#EF4444; box-shadow:none;" onclick="goBack()">❮ Terug</button>
-        <button class="btn-main btn-success" style="margin:0; width:140px;" onclick="window.print()">Printen 🖨️</button>
+<!-- ===== WERKBLAD ===== -->
+<div id="printview" style="display:none;">
+  <div class="no-print wb-controls">
+    <button class="btn-main" style="margin:0; width:140px; background:#EF4444; box-shadow:none;" onclick="goBack()">❮ Terug</button>
+    <button class="btn-main btn-success" style="margin:0; width:140px;" onclick="window.print()">Printen 🖨️</button>
+  </div>
+  <div id="wb-warn" class="no-print" style="display:none; max-width:210mm; margin:0 auto 14px auto; background:#FEF3C7; border:1.5px solid #F59E0B; color:#92400E; border-radius:12px; padding:10px 14px; font-family:'Inter',sans-serif; font-size:14px; box-sizing:border-box;"></div>
+  <div id="wb-zoom">
+    <div id="werkblad">
+
+  <div class="wb-banner" id="wb-banner"></div>
+  <div class="wb-head">
+    <div>
+      <div class="wb-titel" id="wb-titel">Huiswerk</div>
+      <div style="font-size:14px; color:#555;" id="wb-peptalk"></div>
     </div>
-    <div style="border-bottom:3px solid #000; padding-bottom:8px; margin-bottom:20px; display:flex; justify-content:space-between; font-weight:bold; font-size:18px;">
-        <span id="wb-titel">Huiswerk</span><span>Naam: ___________________</span>
+    <div class="wb-meta">
+      Naam: ______________<br>
+      Datum: ______________
     </div>
-    <div id="inhoud"></div>
-</div>
+  </div>
+
+  <div id="inhoud"></div>
+
+  <div id="wb-onder">
+    <div class="bon">
+      <div class="bon-label">🎟️ Beloningsbon<br>alles af = verdiend!</div>
+      <div class="bon-tekst" id="wb-bon"></div>
+      <div class="bon-klein">Geldig vandaag ✔<br>Handtekening: __________</div>
+    </div>
+    <div class="wb-footer">
+      <div class="mopje" id="wb-mopje"></div>
+      <div class="sticker-vak">Sticker als alles af is! 🌟</div>
+    </div>
+  </div>
+
+  <div id="sleutel" style="display:none;">
+    <div class="sleutel-head">🔑 Verbetersleutel — voor mama &amp; papa</div>
+    <div id="sleutel-inhoud"></div>
+  </div>
+    </div><!-- /werkblad -->
+  </div><!-- /wb-zoom -->
+</div><!-- /printview -->
 
 <script>
-    const readData = {
-        avi1: ["pim is een mug.", "de roos is rood.", "ik zie een vis.", "daan gaat naar bos.", "het ijs is koud.", "een mol in de tuin.", "aap eet een noot.", "zus speelt met pop.", "jan heeft een bal.", "het is een bel."],
-        avi2: ["De poes slaapt op de mat.", "Ik speel met de bal.", "Mama bakt een koek.", "De vogel bouwt een nest.", "Ik zwem in het bad.", "Papa wast de auto.", "Het gras is groen.", "Mijn fiets is snel."],
-        avi3: ["Vandaag gaan we naar het bos.", "Zie je de eekhoorn daar?", "Ik heb een schelp gevonden.", "De ridder vecht met de draak.", "Morgen gaan we naar oma.", "De hond rent achter de bal.", "Er zit een vogel in de boom.", "De appel is lekker."]
+/* =========================================================
+   DATA
+   ========================================================= */
+const readData = {
+  avi1: ["pim is een mug.", "de roos is rood.", "ik zie een vis.", "daan gaat naar bos.", "het ijs is koud.", "een mol in de tuin.", "aap eet een noot.", "zus speelt met pop.", "jan heeft een bal.", "het is een bel.", "de zon is geel.", "kim eet een peer."],
+  avi2: ["De poes slaapt op de mat.", "Ik speel met de bal.", "Mama bakt een koek.", "De vogel bouwt een nest.", "Ik zwem in het bad.", "Papa wast de auto.", "Het gras is groen.", "Mijn fiets is snel.", "De maan schijnt fel.", "Wij eten een ijsje.", "De hond blaft naar de kat.", "Ik draag mijn rode jas."],
+  avi3: ["Vandaag gaan we naar het bos.", "Zie je de eekhoorn daar?", "Ik heb een schelp gevonden.", "De ridder vecht met de draak.", "Morgen gaan we naar oma.", "De hond rent achter de bal.", "Er zit een vogel in de boom.", "De appel is lekker.", "Wij bouwen een hut in de tuin.", "De juf leest een mooi verhaal voor.", "In de zomer zwemmen we in zee.", "Mijn broer kan al heel snel fietsen."],
+  avi4: ["De brandweerman klimt op de hoge ladder.", "Gisteren hebben wij pannenkoeken gebakken.", "De schildpad kruipt langzaam door het gras.", "Op het strand zoeken we mooie schelpen.", "De piloot vliegt met zijn vliegtuig door de wolken.", "In de winter ligt er soms sneeuw op het dak.", "De kapitein stuurt het schip naar de haven.", "Mijn vriend heeft een nieuwe fiets gekregen.", "De bakker maakt elke ochtend vers brood.", "Wij plukken rijpe kersen uit de boom."],
+  avi5: ["De astronaut zweeft gewichtloos door het ruimtestation.", "Tijdens het onweer telden we de seconden tussen bliksem en donder.", "De archeoloog vond een eeuwenoude schat onder de grond.", "Het orkest speelde een prachtig concert in de grote zaal.", "De duiker ontdekte een gezonken schip vol geheimen.", "In de herfst dwarrelen de bladeren van de bomen.", "De uitvinder bouwde een machine die kon praten.", "Het kasteel op de heuvel is al honderden jaren oud.", "De trein raast met hoge snelheid door de donkere tunnel.", "Onze klas gaat volgende week op uitstap naar het museum."]
+};
+
+const storyPlusMin = [
+  { q: "Er zitten [X] vogels op een tak in de boom. Er vliegen [Y] vogels weg. Hoeveel vogels blijven er op de tak zitten?", op: "-" },
+  { q: "Jan heeft [X] rode knikkers in zijn zak. Hij wint bij het spelen nog [Y] blauwe knikkers. Hoeveel knikkers heeft Jan nu in totaal?", op: "+" },
+  { q: "In de mand liggen [X] appels. Mama koopt in de winkel nog [Y] peren en legt ze erbij. Hoeveel vruchten liggen er nu in de mand?", op: "+" },
+  { q: "Er staan [X] auto's op de parking bij de school. Er rijden [Y] auto's naar huis. Hoeveel auto's staan er nog op de parking?", op: "-" },
+  { q: "Roos plukt [X] mooie bloemen in de tuin. Ze geeft [Y] bloemen aan haar lieve oma. Hoeveel bloemen houdt Roos zelf over?", op: "-" },
+  { q: "Op het feest zijn er [X] ballonnen. Er knappen [Y] ballonnen. Hoeveel ballonnen zijn er nog heel?", op: "-" },
+  { q: "Lukas spaart stickers. Hij heeft er al [X] en krijgt er [Y] bij van zijn vriend. Hoeveel stickers heeft Lukas nu?", op: "+" },
+  { q: "In het zwembad zwemmen [X] kinderen. Er komen nog [Y] kinderen bij. Hoeveel kinderen zwemmen er nu?", op: "+" },
+  { q: "De bakker bakt [X] broodjes. Hij verkoopt er [Y]. Hoeveel broodjes blijven er over?", op: "-" },
+  { q: "Emma leest een boek van [X] bladzijden. Ze heeft er al [Y] gelezen. Hoeveel bladzijden moet ze nog lezen?", op: "-" }
+];
+const storyMulti = [
+  { q: "In de klas staan [X] tafels. Aan elke tafel zitten [Y] kinderen. Hoeveel kinderen zitten er in de klas?", op: "x" },
+  { q: "Oma heeft [X] vazen. In elke vaas staan [Y] bloemen. Hoeveel bloemen heeft oma in totaal?", op: "x" },
+  { q: "Een spin heeft 8 poten. Hoeveel poten hebben [X] spinnen samen?", op: "x8" },
+  { q: "In één doos zitten [Y] koeken. Mama koopt [X] dozen. Hoeveel koeken zijn dat samen?", op: "x" },
+  { q: "Een fiets heeft 2 wielen. Hoeveel wielen hebben [X] fietsen samen?", op: "x2" }
+];
+
+const themes = {
+  dieren:  { naam: "Dieren",  banner: "🦁🐵🐘🦒🐸🦊🐢🦉", icon: "🐾" },
+  ruimte:  { naam: "Ruimte",  banner: "🚀🪐⭐🌙👨‍🚀☄️🛸✨", icon: "🚀" },
+  piraten: { naam: "Piraten", banner: "🏴‍☠️⚓🦜💰🗺️⛵🐙🏝️", icon: "⚓" },
+  sport:   { naam: "Sport",   banner: "⚽🏀🏃🥇🚴🏆🤸🎯", icon: "🏆" },
+  magie:   { naam: "Magie",   banner: "🦄🌈✨👑🧙‍♂️🐉🔮⭐", icon: "✨" }
+};
+const peptalks = ["Jij kan dit, kanjer! 💪", "Doe je best en heb plezier! 😄", "Eén oefening per keer, jij raakt er wel!", "Superheld aan het werk! 🦸", "Laat zien wat je kan, topper!", "Rustig lezen, goed nadenken… en hop!"];
+const mopjes = [
+  "<b>Mopje als je klaar bent 🤭</b><br>Wat zegt de ene rekenmachine tegen de andere? … 'Jij kan op mij rekenen!'",
+  "<b>Mopje als je klaar bent 🤭</b><br>Waarom nam het potlood vakantie? … Het was op!",
+  "<b>Mopje als je klaar bent 🤭</b><br>Welke vis kan niet zwemmen? … Een visstick!",
+  "<b>Mopje als je klaar bent 🤭</b><br>Wat is geel en kan goed rekenen? … Een slimme banaan!",
+  "<b>Raadsel als je klaar bent 🧐</b><br>Ik heb een gezicht en twee wijzers, maar geen ogen. Wat ben ik? … Een klok!",
+  "<b>Mopje als je klaar bent 🤭</b><br>Waarom ging de koe naar de ruimte? … Ze wilde naar de melk-weg!",
+  "<b>Mopje als je klaar bent 🤭</b><br>Wat zegt nul tegen acht? … 'Mooie riem heb jij aan!'",
+  "<b>Raadsel als je klaar bent 🧐</b><br>Hoe meer je eruit haalt, hoe groter ik word. Wat ben ik? … Een put!"
+];
+const beloningen = [
+  "5 minuten extra tablet- of tv-tijd 📱",
+  "Jij kiest wat we vanavond of morgen eten: ______________ 🍝 (vul samen in!)",
+  "Een gezelschapsspel spelen naar keuze 🎲",
+  "10 minuten langer opblijven 🌙",
+  "Jij kiest het dessert: ______________ 🍨",
+  "Een extra verhaaltje voor het slapengaan 📖",
+  "Jij kiest de film of aflevering vanavond 🎬",
+  "Samen naar de speeltuin of buiten spelen 🛝",
+  "Jij mag de muziek kiezen in de auto 🎵",
+  "Samen iets lekkers bakken 🧁",
+  "15 minuten samen spelen wat jij wil ⚽",
+  "Een vriendje mag komen spelen 🧑‍🤝‍🧑",
+  "Joker! Vul samen een beloning in: ______________ 🃏"
+];
+const secColors = ["#F59E0B","#10B981","#6366F1","#EC4899","#0EA5E9","#8B5CF6","#EF4444","#14B8A6"];
+
+/* =========================================================
+   STATE & SETUP
+   ========================================================= */
+let leerjaar = parseInt(localStorage.getItem('hw_leerjaar') || "2");
+let theme = localStorage.getItem('hw_theme') || "dieren";
+let answerSheet = [];
+let secIndex = 0;
+
+function setLeerjaar(lj) {
+  leerjaar = lj;
+  localStorage.setItem('hw_leerjaar', lj);
+  document.querySelectorAll('#leerjaarSeg button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.lj) === lj));
+  applyLeerjaar();
+}
+function setTheme(t) {
+  theme = t;
+  localStorage.setItem('hw_theme', t);
+  document.querySelectorAll('.theme-chip').forEach(c => c.classList.toggle('active', c.dataset.t === t));
+}
+function buildThemeRow() {
+  const row = document.getElementById('themeRow');
+  row.innerHTML = Object.entries(themes).map(([k, v]) =>
+    `<div class="theme-chip ${k===theme?'active':''}" data-t="${k}" onclick="setTheme('${k}')"><span class="t-emoji">${v.icon}</span><span class="t-name">${v.naam}</span></div>`
+  ).join('');
+}
+function buildTafelChips() {
+  const wrap = document.getElementById('tafelChips');
+  const defaults = leerjaar >= 3 ? [1,2,3,4,5,6,7,8,9,10] : [1,2,5,10];
+  wrap.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const b = document.createElement('button');
+    b.className = 'tafel-chip' + (defaults.includes(i) ? ' active' : '');
+    b.textContent = i;
+    b.dataset.t = i;
+    b.onclick = () => b.classList.toggle('active');
+    wrap.appendChild(b);
+  }
+}
+function getTafels() {
+  const t = [...document.querySelectorAll('.tafel-chip.active')].map(b => parseInt(b.dataset.t));
+  return t.length ? t : [2,5,10];
+}
+
+function applyLeerjaar() {
+  const range = document.getElementById('range');
+  const klokLvl = document.getElementById('klokLvl');
+  // Bereik-opties tonen en standaard instellen per leerjaar
+  if (leerjaar === 1) { range.value = "20"; klokLvl.value = "half"; }
+  if (leerjaar === 2) { range.value = "100"; klokLvl.value = "kwart"; }
+  if (leerjaar === 3) { range.value = "1000"; klokLvl.value = "kwart"; }
+  document.getElementById('vMultiRow').style.display = (leerjaar >= 2) ? 'flex' : 'none';
+  if (leerjaar < 2) document.getElementById('vMulti').checked = false;
+  buildTafelChips();
+  checkRange();
+}
+
+function checkRange() {
+  const range = parseInt(document.getElementById('range').value);
+  document.getElementById('brugRow').style.display = (range > 10) ? 'flex' : 'none';
+  const showTafels = (range >= 100 || leerjaar >= 2);
+  document.getElementById('multiRow').style.display = showTafels ? 'flex' : 'none';
+  document.getElementById('geldRow').style.display = (leerjaar >= 2) ? 'flex' : 'none';
+  if (!showTafels) {
+    document.getElementById('checkMulti').checked = false;
+    document.getElementById('checkDeel').checked = false;
+    document.getElementById('multiCfg').style.display = 'none';
+    document.getElementById('deelCfg').style.display = 'none';
+  }
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+function goBack() {
+  document.getElementById('printview').style.display = 'none';
+  document.querySelector('.app-container').style.display = 'block';
+}
+/* Schaal het A4-blad proportioneel naar de schermbreedte (WYSIWYG-preview) */
+function updateScale() {
+  const wb = document.getElementById('werkblad');
+  const zoom = document.getElementById('wb-zoom');
+  if (document.getElementById('printview').style.display === 'none') return;
+  const beschikbaar = Math.min(document.documentElement.clientWidth, window.innerWidth) - 12;
+  const s = Math.min(1, beschikbaar / wb.offsetWidth);
+  wb.style.transform = `scale(${s})`;
+  zoom.style.width = Math.round(wb.offsetWidth * s) + 'px';
+  zoom.style.height = Math.round(wb.offsetHeight * s) + 'px';
+}
+window.addEventListener('resize', updateScale);
+window.addEventListener('orientationchange', () => setTimeout(updateScale, 150));
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+}
+function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pick(arr) { return arr[getRandom(0, arr.length - 1)]; }
+function shuffle(arr) { return [...arr].sort(() => 0.5 - Math.random()); }
+function mm(v) { return v * 3.7795275591; } /* mm naar px */
+
+/* =========================================================
+   PAGINA-VUL-MOTOR
+   Meet de inhoud t.o.v. een A4 en laat oefeningen rij per
+   rij aangroeien tot de pagina mooi gevuld is.
+   ========================================================= */
+function fillerBox(hPx) {
+  const h = Math.max(70, Math.round(hPx));
+  return `<div class="section tekenvak" style="--sec-color:#94A3B8; height:${h}px;">🎨 Helemaal klaar? Maak hier een mooie tekening!</div>`;
+}
+
+function fillToPage(tasks, opts = {}) {
+  const wb = document.getElementById('werkblad');
+  const inhoud = document.getElementById('inhoud');
+  const warnEl = document.getElementById('wb-warn');
+  warnEl.style.display = 'none';
+  wb.style.transform = 'none'; /* meten op echte A4-breedte en schaal 1 */
+
+  const SEC_MARGIN = 14;
+  const render = () => {
+    answerSheet = []; secIndex = 0;
+    inhoud.innerHTML = tasks.map(t => t.gen(t.count)).join('');
+  };
+  render();
+
+  const topChrome = document.querySelector('.wb-banner').offsetHeight + 6
+                  + document.querySelector('.wb-head').offsetHeight + 16;
+  const footChrome = document.getElementById('wb-onder').offsetHeight + 18;
+  const P = mm(297 - 20) - mm(3);          /* paginahoogte min vaste @page-padding en veiligheidsmarge */
+  const cap = page => (page === 1 ? P - topChrome : P);
+  const B = cap(1);                         /* strengste limiet: geen sectie mag hier ooit boven uitkomen */
+
+  const secH = i => inhoud.children[i].getBoundingClientRect().height + SEC_MARGIN;
+  const allH = () => [...inhoud.children].map(el => el.getBoundingClientRect().height + SEC_MARGIN);
+
+  /* Simuleer hoe de secties over pagina's verdeeld worden (secties breken nooit);
+     de voettekst (mopje + sticker) telt mee op de laatste pagina */
+  const pack = () => {
+    let page = 1, used = 0, waste = 0;
+    for (const h of allH()) {
+      if (used + h > cap(page) && used > 0) { waste += cap(page) - used; page++; used = h; }
+      else used += h;
+    }
+    if (used + footChrome > cap(page)) { waste += cap(page) - used; page++; used = footChrome; }
+    else used += footChrome;
+    return { pages: page, used, waste, rest: cap(page) - used, score: waste + (cap(page) - used) };
+  };
+
+  /* FASE 0 — te grote secties: krimp tot elke sectie op zich op één pagina past */
+  tasks.forEach((t, i) => {
+    let g = 0;
+    while (g++ < 40 && secH(i) > B && t.count - t.step >= t.step) {
+      t.count -= t.step; t.max = Math.min(t.max, t.count);
+      render();
+    }
+  });
+
+  const growable = tasks.filter(t => t.grow !== false && t.step > 0);
+
+  /* FASE 1 — past het nét niet op één pagina? Eerst krimpen i.p.v. een 2e pagina te beginnen */
+  if (opts.preferOnePage !== false && pack().pages > 1 && allH().reduce((a, b) => a + b, 0) < B * 1.4) {
+    let g = 0;
+    while (g++ < 60 && pack().pages > 1) {
+      const t = growable.find(x => x.count - x.step >= (x.min || x.step));
+      if (!t) break;
+      t.count -= t.step;
+      render();
+    }
+  }
+
+  /* FASE 2 — groeien: enkel stappen die de pagina's beter vullen, nooit over een grens heen */
+  const targetPages = pack().pages;
+  let guard = 0, idx = 0;
+  while (guard++ < 200 && growable.length) {
+    const before = pack();
+    if (before.rest < mm(8) && before.waste < mm(8)) break; /* mooi vol */
+    let improved = false;
+    for (let i = 0; i < growable.length; i++) {
+      const t = growable[(idx + i) % growable.length];
+      const ti = tasks.indexOf(t);
+      if (t.count + t.step > t.max) continue;
+      t.count += t.step;
+      render();
+      const after = pack();
+      if (after.pages > targetPages || secH(ti) > B || after.score >= before.score) {
+        t.count -= t.step; render(); /* terugdraaien, maar later opnieuw proberen */
+      } else {
+        idx = (idx + i + 1) % growable.length;
+        improved = true;
+        break;
+      }
+    }
+    if (!improved) break;
+  }
+
+  /* FASE 3 — gaten opvullen: waar een sectie naar de volgende pagina verspringt,
+     komt een tekenvak; en de rest van de laatste pagina wordt ook opgevuld */
+  const kids = [...inhoud.children];
+  let page = 1, used = 0;
+  for (const el of kids) {
+    const h = el.getBoundingClientRect().height + SEC_MARGIN;
+    if (used + h > cap(page) && used > 0) {
+      const gap = cap(page) - used;
+      if (gap > mm(30)) {
+        const f = document.createElement('div');
+        f.className = 'section tekenvak';
+        f.style.cssText = `--sec-color:#94A3B8; height:${Math.round(gap - SEC_MARGIN - 4)}px;`;
+        f.textContent = '🎨 Maak hier een mooie tekening!';
+        inhoud.insertBefore(f, el);
+      }
+      page++; used = h;
+    } else {
+      used += h;
+    }
+  }
+  const rest = cap(page) - used - footChrome;
+  if (rest > mm(20)) inhoud.insertAdjacentHTML('beforeend', fillerBox(rest - SEC_MARGIN - 4));
+
+  /* Waarschuwing alleen als we duidelijk onder de gevraagde aantallen moesten gaan */
+  const verkleind = tasks.some(t => t.userCount && t.count <= t.userCount - 2 * t.step);
+  if (verkleind) {
+    warnEl.textContent = '⚠️ Sommige aantallen waren te groot om netjes binnen de kaders te passen en zijn automatisch verkleind.';
+    warnEl.style.display = 'block';
+  }
+
+  updateScale(); /* daarna pas verkleinen voor het scherm */
+}
+
+/* =========================================================
+   WERKBLAD-BOUWSTENEN
+   ========================================================= */
+function sectionOpen(title, tip) {
+  const color = secColors[secIndex++ % secColors.length];
+  let h = `<div class="section" style="--sec-color:${color}">`;
+  h += `<div class="section-head"><span class="section-title">${themes[theme].icon} ${title}</span><span class="section-stars">☆ ☆ ☆</span></div>`;
+  if (tip) h += `<div class="section-tip">${tip}</div>`;
+  return h;
+}
+function addAnswers(title, list) {
+  if (list && list.length) answerSheet.push({ title, list });
+}
+function startWerkblad(titel) {
+  document.querySelector('.app-container').style.display = 'none';
+  document.getElementById('printview').style.display = 'block';
+  document.getElementById('werkblad').style.transform = 'none';
+  document.getElementById('inhoud').innerHTML = '';
+  document.getElementById('wb-titel').innerText = `${titel} — ${leerjaar}e leerjaar`;
+  document.getElementById('wb-banner').innerHTML = `<span>${themes[theme].banner}</span><span>${themes[theme].banner}</span>`;
+  document.getElementById('wb-peptalk').innerText = pick(peptalks);
+  document.getElementById('wb-mopje').innerHTML = pick(mopjes);
+  document.getElementById('wb-bon').textContent = pick(beloningen);
+  answerSheet = [];
+  secIndex = 0;
+  window.scrollTo(0, 0);
+}
+function finishWerkblad(metSleutel) {
+  const sl = document.getElementById('sleutel');
+  if (metSleutel && answerSheet.length) {
+    sl.style.display = 'block';
+    document.getElementById('sleutel-inhoud').innerHTML = answerSheet.map(s =>
+      `<div class="sleutel-sectie"><b>${s.title}:</b><br>${s.list.join(' &nbsp;•&nbsp; ')}</div>`
+    ).join('');
+  } else {
+    sl.style.display = 'none';
+  }
+  updateScale();
+}
+
+/* =========================================================
+   GENERATOREN
+   ========================================================= */
+function genPM(range, count) {
+  let h = sectionOpen("Plus en min");
+  const ans = [];
+  h += `<div class="grid">`;
+  for (let i = 0; i < count; i++) {
+    if (Math.random() > 0.5) {
+      const a = getRandom(0, range), b = getRandom(0, range - a);
+      h += `<div class="som-box">${a} + ${b} = __</div>`;
+      ans.push(`${a}+${b}=${a + b}`);
+    } else {
+      const a = getRandom(0, range), b = getRandom(0, a);
+      h += `<div class="som-box">${a} − ${b} = __</div>`;
+      ans.push(`${a}−${b}=${a - b}`);
+    }
+  }
+  addAnswers("Plus en min", ans);
+  return h + `</div></div>`;
+}
+
+function genFill(range, count) {
+  let h = sectionOpen("Vul de som aan");
+  const ans = [];
+  h += `<div class="grid">`;
+  for (let i = 0; i < count; i++) {
+    const r = Math.random();
+    if (r < 0.4) {
+      const res = getRandom(5, range), a = getRandom(1, res - 1);
+      h += `<div class="som-box">${a} + __ = ${res}</div>`;
+      ans.push(`${a}+<b>${res - a}</b>=${res}`);
+    } else if (r < 0.7) {
+      const a = getRandom(5, range), res = getRandom(0, a - 1);
+      h += `<div class="som-box">${a} − __ = ${res}</div>`;
+      ans.push(`${a}−<b>${a - res}</b>=${res}`);
+    } else {
+      const b = getRandom(1, Math.min(9, range - 1)), res = getRandom(1, range - b);
+      h += `<div class="som-box">__ − ${b} = ${res}</div>`;
+      ans.push(`<b>${res + b}</b>−${b}=${res}`);
+    }
+  }
+  addAnswers("Vul de som aan", ans);
+  return h + `</div></div>`;
+}
+
+function genSplits(range, count) {
+  const top = Math.min(range, 20);
+  let h = sectionOpen("Splitsen");
+  const ans = [];
+  h += `<div class="splits-grid">`;
+  for (let i = 0; i < count; i++) {
+    const t = getRandom(2, top), l = getRandom(0, t);
+    h += `<div class="splits-box"><div class="top-circle">${t}</div><div class="benen"></div><div class="onder-box"><div class="mini-invul">${l}</div><div class="mini-invul"></div></div></div>`;
+    ans.push(`${t} = ${l} en ${t - l}`);
+  }
+  addAnswers("Splitsen", ans);
+  return h + `</div></div>`;
+}
+
+function genBrug(range, count) {
+  let h = sectionOpen("Brug over het tiental", "Splits het tweede getal: spring eerst naar het tiental!");
+  const ans = [];
+  h += `<div style="display:flex; flex-wrap:wrap; gap:15px;">`;
+  for (let i = 0; i < count; i++) {
+    let a, b;
+    if (range <= 20) {
+      a = getRandom(6, 9); b = getRandom(11 - a, 9);
+    } else {
+      const tiental = getRandom(1, Math.max(1, Math.floor(range / 10) - 2)) * 10;
+      const eenheid = getRandom(5, 9);
+      a = tiental + eenheid;
+      b = getRandom(10 - eenheid + 1, 9);
+    }
+    h += `<div class="brug-item"><div class="brug-som">${a} + ${b} = __</div><div class="brug-benen-container"><div class="benen"></div><div class="brug-onder"><div class="mini-invul"></div><div class="mini-invul"></div></div></div></div>`;
+    ans.push(`${a}+${b}=${a + b}`);
+  }
+  addAnswers("Brug over het tiental", ans);
+  return h + `</div></div>`;
+}
+
+function genSlang(range, count, len) {
+  let h = sectionOpen("Rekenslangen 🐍", "Reken stap voor stap en vul elke bol in.");
+  const ans = [];
+  for (let s = 0; s < count; s++) {
+    let cur = getRandom(1, Math.max(2, Math.floor(range / 2)));
+    let trail = [cur];
+    h += `<div class="slang-container"><div class="slang-bol">${cur}</div>`;
+    for (let i = 0; i < len - 1; i++) {
+      let op = Math.random() > 0.5 ? '+' : '-';
+      const v = getRandom(1, Math.floor(range / 10) + 2);
+      if (op === '+' && cur + v > range) op = '-';
+      if (op === '-' && cur - v < 0) op = '+';
+      cur = (op === '+') ? cur + v : cur - v;
+      trail.push(cur);
+      h += `<span>(${op}${v})➔</span><div class="slang-bol"></div>`;
+    }
+    h += `</div>`;
+    ans.push(trail.join(' → '));
+  }
+  addAnswers("Rekenslangen", ans);
+  return h + `</div>`;
+}
+
+function genRij(range, count) {
+  let h = sectionOpen("Getallenrij 🚂", "Welke getallen horen in de lege vakjes?");
+  const ans = [];
+  const stepsByRange = range <= 20 ? [1, 2] : range <= 100 ? [1, 2, 5, 10] : [10, 25, 50, 100];
+  for (let r = 0; r < count; r++) {
+    const step = pick(stepsByRange) * (Math.random() > 0.75 ? -1 : 1);
+    const len = 7;
+    let start;
+    if (step > 0) start = getRandom(0, Math.max(0, range - step * (len - 1)));
+    else start = getRandom(Math.abs(step) * (len - 1), range);
+    const rij = Array.from({ length: len }, (_, i) => start + i * step);
+    const blanks = shuffle([1, 2, 3, 4, 5, 6]).slice(0, 3);
+    h += `<div class="rij-container">`;
+    rij.forEach((n, i) => {
+      const leeg = blanks.includes(i);
+      h += `<div class="rij-vak ${leeg ? 'leeg' : ''}">${leeg ? '' : n}</div>`;
+      if (i < len - 1) h += `<span class="rij-pijl">➔</span>`;
+    });
+    h += `<span class="rij-sprong">(sprong: ${step > 0 ? '+' : ''}${step})</span></div>`;
+    ans.push(rij.join(', '));
+  }
+  addAnswers("Getallenrij", ans);
+  return h + `</div>`;
+}
+
+function genVerg(range, count) {
+  let h = sectionOpen("Groter, kleiner of gelijk? ⚖️", "Schrijf &lt;, &gt; of = in de cirkel. De krokodil eet altijd het grootste getal!");
+  const ans = [];
+  h += `<div class="verg-grid">`;
+  for (let i = 0; i < count; i++) {
+    let a = getRandom(0, range), b = getRandom(0, range);
+    if (Math.random() < 0.15) b = a;
+    h += `<div class="verg-item"><span>${a}</span><div class="verg-bol"></div><span>${b}</span></div>`;
+    ans.push(`${a} ${a < b ? '<' : a > b ? '>' : '='} ${b}`);
+  }
+  addAnswers("Groter of kleiner", ans);
+  return h + `</div></div>`;
+}
+
+function klokSVG(h24, m) {
+  const size = 86, c = size / 2, r = c - 4;
+  let ticks = '';
+  for (let i = 0; i < 12; i++) {
+    const ang = i * 30 * Math.PI / 180;
+    const x1 = c + Math.sin(ang) * (r - 3), y1 = c - Math.cos(ang) * (r - 3);
+    const x2 = c + Math.sin(ang) * (r - 9), y2 = c - Math.cos(ang) * (r - 9);
+    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2"/>`;
+    const nx = c + Math.sin(ang) * (r - 16), ny = c - Math.cos(ang) * (r - 16) + 3.5;
+    ticks += `<text x="${nx}" y="${ny}" font-size="9" text-anchor="middle" font-weight="bold">${i === 0 ? 12 : i}</text>`;
+  }
+  const hAng = ((h24 % 12) * 30 + m * 0.5) * Math.PI / 180;
+  const mAng = (m * 6) * Math.PI / 180;
+  const hx = c + Math.sin(hAng) * (r * 0.45), hy = c - Math.cos(hAng) * (r * 0.45);
+  const mx = c + Math.sin(mAng) * (r * 0.72), my = c - Math.cos(mAng) * (r * 0.72);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${c}" cy="${c}" r="${r}" fill="white" stroke="#000" stroke-width="3"/>${ticks}
+    <line x1="${c}" y1="${c}" x2="${hx}" y2="${hy}" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+    <line x1="${c}" y1="${c}" x2="${mx}" y2="${my}" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="${c}" cy="${c}" r="2.5" fill="#000"/></svg>`;
+}
+function klokWoord(h, m) {
+  const namen = ["twaalf","een","twee","drie","vier","vijf","zes","zeven","acht","negen","tien","elf"];
+  const u = h % 12, volgend = (h + 1) % 12;
+  if (m === 0) return `${namen[u]} uur (${h}:00)`;
+  if (m === 30) return `half ${namen[volgend]} (${h}:30)`;
+  if (m === 15) return `kwart na ${namen[u]} (${h}:15)`;
+  if (m === 45) return `kwart voor ${namen[volgend]} (${h}:45)`;
+  return `${h}:${String(m).padStart(2, '0')}`;
+}
+function genKlok(count, lvl) {
+  let h = sectionOpen("Hoe laat is het? 🕐", "Schrijf onder elke klok hoe laat het is.");
+  const ans = [];
+  const minOpties = lvl === 'heel' ? [0] : lvl === 'half' ? [0, 30] : [0, 15, 30, 45];
+  h += `<div class="klok-grid">`;
+  for (let i = 0; i < count; i++) {
+    const uur = getRandom(1, 12), m = pick(minOpties);
+    h += `<div class="klok-item">${klokSVG(uur, m)}<div class="klok-lijn"></div></div>`;
+    ans.push(klokWoord(uur, m));
+  }
+  addAnswers("Klokkijken", ans);
+  return h + `</div></div>`;
+}
+
+function genGeld(count, metCenten) {
+  let h = sectionOpen("Hoeveel geld is dit? 💶", "Tel de munten en biljetten samen.");
+  const ans = [];
+  const munten = metCenten ? [2, 1, 0.5] : [2, 1];
+  const biljetten = [5, 10, 20];
+  for (let i = 0; i < count; i++) {
+    let items = [], totaal = 0;
+    const nBil = getRandom(0, 2), nMunt = getRandom(2, 5);
+    for (let b = 0; b < nBil; b++) { const v = pick(biljetten); items.push({ t: 'b', v }); totaal += v; }
+    for (let mn = 0; mn < nMunt; mn++) { const v = pick(munten); items.push({ t: 'm', v }); totaal += v; }
+    h += `<div class="geld-item">`;
+    items.sort((a, b2) => b2.v - a.v).forEach(it => {
+      if (it.t === 'b') h += `<div class="biljet">€${it.v}</div>`;
+      else if (it.v >= 1) h += `<div class="munt">€${it.v}</div>`;
+      else h += `<div class="munt zilver">50c</div>`;
+    });
+    h += `<div class="geld-antwoord">= € <span class="geld-invul"></span></div></div>`;
+    ans.push(`€ ${totaal.toFixed(2).replace('.', ',').replace(',00', '')}`);
+  }
+  addAnswers("Geld rekenen", ans);
+  return h + `</div>`;
+}
+
+function genMulti(count, tafels) {
+  let h = sectionOpen("Maaltafels ✖️", `Tafels van: ${tafels.join(', ')}`);
+  const ans = [];
+  h += `<div class="grid">`;
+  for (let i = 0; i < count; i++) {
+    const t = pick(tafels), a = getRandom(1, 10);
+    if (Math.random() > 0.5) { h += `<div class="som-box">${a} x ${t} = __</div>`; ans.push(`${a}x${t}=${a * t}`); }
+    else { h += `<div class="som-box">${t} x ${a} = __</div>`; ans.push(`${t}x${a}=${t * a}`); }
+  }
+  addAnswers("Maaltafels", ans);
+  return h + `</div></div>`;
+}
+
+function genDeel(count, tafels) {
+  let h = sectionOpen("Deeltafels ➗", `Delen door: ${tafels.join(', ')}`);
+  const ans = [];
+  h += `<div class="grid">`;
+  for (let i = 0; i < count; i++) {
+    const t = pick(tafels), q = getRandom(1, 10);
+    h += `<div class="som-box">${t * q} : ${t} = __</div>`;
+    ans.push(`${t * q}:${t}=${q}`);
+  }
+  addAnswers("Deeltafels", ans);
+  return h + `</div></div>`;
+}
+
+/* =========================================================
+   HOOFD-GENERATOR
+   ========================================================= */
+function generate(type) {
+  if (type === 'math') {
+    startWerkblad("Wiskunde");
+    const range = parseInt(document.getElementById('range').value);
+    const num = id => {
+      const el = document.getElementById(id);
+      let v = parseInt(el.value) || 1;
+      if (el.max) v = Math.min(v, parseInt(el.max));
+      if (el.min) v = Math.max(v, parseInt(el.min));
+      el.value = v;
+      return v;
     };
+    const on = id => document.getElementById(id).checked;
+    const tafels = getTafels();
+    const klokLvl = document.getElementById('klokLvl').value;
 
-    const storyTemplates = [
-        { q: "Er zitten [X] vogels op een tak in de boom. Er vliegen [Y] vogels weg omdat ze honger hebben. Hoeveel vogels blijven er op de tak zitten?", op: "-" },
-        { q: "Jan heeft [X] rode knikkers in zijn zak. Hij wint bij het spelen nog [Y] blauwe knikkers. Hoeveel knikkers heeft Jan nu in totaal?", op: "+" },
-        { q: "In de mand liggen [X] appels. Mama koopt in de winkel nog [Y] peren en legt ze erbij. Hoeveel vruchten liggen er nu in de mand?", op: "+" },
-        { q: "Er staan [X] auto's op de parking bij de school. Er rijden [Y] auto's naar huis. Hoeveel auto's staan er nog op de parking?", op: "-" },
-        { q: "Roos plukt [X] mooie bloemen in de tuin. Ze geeft [Y] bloemen aan haar lieve oma. Hoeveel bloemen houdt Roos zelf over?", op: "-" }
+    /* Elke oefening wordt een taak: gen(aantal), startaantal, groeistap (1 rij) en maximum */
+    const tasks = [];
+    if (on('checkPM'))     tasks.push({ gen: n => genPM(range, n),    count: num('numPM'), userCount: num('numPM'),     step: 4, max: 60, full: on('fullPM') });
+    if (on('checkFill'))   tasks.push({ gen: n => genFill(range, n),  count: num('numFill'), userCount: num('numFill'),   step: 4, max: 48, full: on('fullFill') });
+    if (on('checkSplits')) tasks.push({ gen: n => genSplits(range, n),count: num('numSplits'), userCount: num('numSplits'), step: 6, max: 36, full: on('fullSplits') });
+    if (on('checkBrug') && range > 10) tasks.push({ gen: n => genBrug(range, n), count: num('numBrug'), userCount: num('numBrug'), step: 4, max: 24, full: on('fullBrug') });
+    if (on('checkSL'))     tasks.push({ gen: n => genSlang(range, n, Math.max(2, num('lenSL'))), count: num('numSL'), userCount: num('numSL'), step: 1, max: 8, full: false });
+    if (on('checkRij'))    tasks.push({ gen: n => genRij(range, n),   count: num('numRij'), userCount: num('numRij'),    step: 1, max: 10, full: false });
+    if (on('checkVerg'))   tasks.push({ gen: n => genVerg(range, n),  count: num('numVerg'), userCount: num('numVerg'),   step: 3, max: 30, full: false });
+    if (on('checkKlok'))   tasks.push({ gen: n => genKlok(n, klokLvl), count: num('numKlok'), userCount: num('numKlok'),  step: 4, max: 16, full: false });
+    if (on('checkGeld'))   tasks.push({ gen: n => genGeld(n, on('geldCenten')), count: num('numGeld'), userCount: num('numGeld'), step: 1, max: 10, full: false });
+    if (on('checkMulti'))  tasks.push({ gen: n => genMulti(n, tafels), count: num('numMulti'), userCount: num('numMulti'), step: 4, max: 60, full: on('fullMulti') });
+    if (on('checkDeel'))   tasks.push({ gen: n => genDeel(n, tafels), count: num('numDeel'), userCount: num('numDeel'),   step: 4, max: 48, full: false });
+
+    if (!tasks.length) {
+      document.getElementById('inhoud').innerHTML = '<p>Geen oefeningen geselecteerd. Vink minstens één type aan.</p>';
+      finishWerkblad(false);
+      return;
+    }
+
+    /* 'Pagina vullend' aangevinkt? Dan groeien enkel die taken. Anders groeit alles mee. */
+    const anyFull = tasks.some(t => t.full);
+    tasks.forEach(t => {
+      t.grow = anyFull ? t.full : true;
+      t.min = Math.max(t.step, Math.floor(t.count * 0.6)); /* nooit ver onder de gekozen aantallen krimpen */
+    });
+
+    fillToPage(tasks);
+    finishWerkblad(on('checkSleutel'));
+  }
+
+  else if (type === 'readwrite') {
+    startWerkblad("Lezen & Schrijven");
+    const lvl = document.getElementById('aviLevel').value;
+    const pool = shuffle(readData[lvl]);
+    const tasks = [{
+      gen: n => {
+        let h = sectionOpen("Lees de zin en schrijf ze mooi over ✏️");
+        pool.slice(0, n).forEach(z => {
+          h += `<div class="lees-zin">${z}</div><div class="schrijf-regel"><div class="lijn dak"></div><div class="lijn plafond"></div><div class="lijn vloer"></div><div class="lijn kelder"></div></div>`;
+        });
+        return h + `</div>`;
+      },
+      count: Math.min(parseInt(document.getElementById('numZin').value) || 8, pool.length),
+      userCount: Math.min(parseInt(document.getElementById('numZin').value) || 8, pool.length),
+      step: 1, max: pool.length, grow: true
+    }];
+    fillToPage(tasks);
+    finishWerkblad(false);
+  }
+
+  else if (type === 'stories') {
+    startWerkblad("Vraagstukken");
+    const range = parseInt(document.getElementById('v-range').value);
+    const metMulti = document.getElementById('vMulti').checked;
+    let pool = [...storyPlusMin];
+    if (metMulti) pool = pool.concat(storyMulti);
+    pool = shuffle(pool);
+    const tasks = [{
+      gen: n => genStories(pool.slice(0, n), range),
+      count: Math.min(parseInt(document.getElementById('numVraag').value) || 4, pool.length),
+      userCount: Math.min(parseInt(document.getElementById('numVraag').value) || 4, pool.length),
+      step: 1, max: pool.length, grow: true
+    }];
+    fillToPage(tasks);
+    finishWerkblad(document.getElementById('checkSleutelV').checked);
+  }
+}
+
+function genStories(stories, range) {
+  const ans = [];
+  let h = sectionOpen("Lees goed en los op 💡", "Onderstreep eerst de getallen in het verhaal.");
+  stories.forEach(s => {
+    let x, y, tekst, uitkomst, bewerking;
+    if (s.op === "+" || s.op === "-") {
+      x = getRandom(Math.floor(range / 2), range); y = getRandom(1, Math.floor(range / 2));
+      uitkomst = s.op === "+" ? x + y : x - y;
+      bewerking = `${x} ${s.op === '+' ? '+' : '−'} ${y} = ${uitkomst}`;
+    } else if (s.op === "x") {
+      x = getRandom(2, 9); y = getRandom(2, 9);
+      uitkomst = x * y; bewerking = `${x} x ${y} = ${uitkomst}`;
+    } else { /* x2 / x8: vast getal in het verhaal */
+      const vast = parseInt(s.op.slice(1));
+      x = getRandom(2, 9); y = vast;
+      uitkomst = x * vast; bewerking = `${x} x ${vast} = ${uitkomst}`;
+    }
+    tekst = s.q.replace("[X]", x).replace("[Y]", y);
+    h += `<div class="vraagstuk-item"><div class="vraagstuk-tekst">${tekst}</div><div class="vraagstuk-oplossing"><span>Bewerking: ___________________</span> <span>Antwoord: ________</span></div></div>`;
+    ans.push(bewerking);
+  });
+  addAnswers("Vraagstukken", ans);
+  return h + `</div>`;
+}
+
+/* =========================================================
+   VERRASSINGSBLAD — automix per leerjaar
+   ========================================================= */
+function generateSurprise() {
+  startWerkblad("Verrassingsblad 🎲");
+  let opties;
+  if (leerjaar === 1) {
+    const r = 20;
+    opties = [
+      { gen: n => genPM(r, n),       count: 8, step: 4, max: 32 },
+      { gen: n => genSplits(10, n),  count: 6, step: 6, max: 24 },
+      { gen: n => genFill(r, n),     count: 8, step: 4, max: 24 },
+      { gen: n => genBrug(r, n),     count: 4, step: 4, max: 16 },
+      { gen: n => genRij(r, n),      count: 2, step: 1, max: 5 },
+      { gen: n => genVerg(r, n),     count: 6, step: 3, max: 15 },
+      { gen: n => genKlok(n, 'half'),count: 4, step: 4, max: 8 },
+      { gen: n => genSlang(r, n, 5), count: 1, step: 1, max: 4 }
     ];
+  } else if (leerjaar === 2) {
+    const tafels = getTafels();
+    opties = [
+      { gen: n => genPM(100, n),        count: 8, step: 4, max: 32 },
+      { gen: n => genBrug(100, n),      count: 4, step: 4, max: 16 },
+      { gen: n => genMulti(n, tafels),  count: 8, step: 4, max: 32 },
+      { gen: n => genDeel(n, tafels),   count: 8, step: 4, max: 24 },
+      { gen: n => genRij(100, n),       count: 2, step: 1, max: 5 },
+      { gen: n => genVerg(100, n),      count: 6, step: 3, max: 15 },
+      { gen: n => genKlok(n, 'kwart'),  count: 4, step: 4, max: 8 },
+      { gen: n => genGeld(n, false),    count: 3, step: 1, max: 6 },
+      { gen: n => genFill(100, n),      count: 8, step: 4, max: 24 },
+      { gen: n => genSlang(100, n, 6),  count: 1, step: 1, max: 4 }
+    ];
+  } else {
+    const tafels = [1,2,3,4,5,6,7,8,9,10];
+    opties = [
+      { gen: n => genPM(1000, n),       count: 8, step: 4, max: 32 },
+      { gen: n => genMulti(n, tafels),  count: 12, step: 4, max: 36 },
+      { gen: n => genDeel(n, tafels),   count: 8, step: 4, max: 28 },
+      { gen: n => genRij(1000, n),      count: 2, step: 1, max: 5 },
+      { gen: n => genVerg(1000, n),     count: 6, step: 3, max: 15 },
+      { gen: n => genKlok(n, 'kwart'),  count: 4, step: 4, max: 8 },
+      { gen: n => genGeld(n, true),     count: 3, step: 1, max: 6 }
+    ];
+  }
+  const tasks = shuffle(opties).slice(0, 4);
+  tasks.forEach(t => t.grow = true);
+  fillToPage(tasks);
+  finishWerkblad(document.getElementById('checkSleutelMix').checked);
+}
 
-    function showScreen(id) {
-        document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-    }
-
-    function goBack() {
-        document.getElementById('werkblad').style.display = 'none';
-        document.querySelector('.app-container').style.display = 'block';
-    }
-
-    function toggle(id) {
-        const el = document.getElementById(id);
-        el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
-    }
-
-    function checkRange() {
-        const range = document.getElementById('range').value;
-        document.getElementById('brugRow').style.display = (range !== "10") ? 'flex' : 'none';
-        document.getElementById('multiRow').style.display = (range === "100") ? 'flex' : 'none';
-        if(range !== "100") {
-            document.getElementById('checkMulti').checked = false;
-            document.getElementById('multiCfg').style.display = 'none';
-        }
-    }
-
-    function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-
-    function generate(type) {
-        document.querySelector('.app-container').style.display = 'none';
-        document.getElementById('werkblad').style.display = 'block';
-        const inhoud = document.getElementById('inhoud');
-        inhoud.innerHTML = '';
-
-        if(type === 'math') {
-            document.getElementById('wb-titel').innerText = "Wiskunde";
-            const range = parseInt(document.getElementById('range').value);
-            
-            const activeTasks = [];
-            if(document.getElementById('checkBrug').checked) activeTasks.push({id: 'Brug', full: document.getElementById('fullBrug').checked, numId: 'numBrug'});
-            if(document.getElementById('checkPM').checked) activeTasks.push({id: 'PM', full: document.getElementById('fullPM').checked, numId: 'numPM'});
-            if(document.getElementById('checkFill').checked) activeTasks.push({id: 'Fill', full: document.getElementById('fullFill').checked, numId: 'numFill'});
-            if(document.getElementById('checkSplits').checked) activeTasks.push({id: 'Splits', full: document.getElementById('fullSplits').checked, numId: 'numSplits'});
-            if(document.getElementById('checkSL').checked) activeTasks.push({id: 'SL', full: document.getElementById('fullSL').checked, numId: 'numSL'});
-            if(document.getElementById('checkMulti').checked && range === 100) activeTasks.push({id: 'Multi', full: document.getElementById('fullMulti').checked, numId: 'numMulti'});
-
-            const fullTasks = activeTasks.filter(t => t.full);
-            const fixedTasks = activeTasks.filter(t => !t.full);
-            
-            let totalFixedUnits = fixedTasks.length * 2; 
-            let availableUnits = 24 - totalFixedUnits; 
-            let unitsPerFullTask = fullTasks.length > 0 ? Math.floor(availableUnits / fullTasks.length) : 0;
-
-            activeTasks.forEach(task => {
-                let count = parseInt(document.getElementById(task.numId).value);
-                if(task.full) {
-                    if(task.id === 'PM' || task.id === 'Fill' || task.id === 'Multi') count = unitsPerFullTask * 4;
-                    if(task.id === 'Splits') count = unitsPerFullTask * 3;
-                    if(task.id === 'Brug') count = unitsPerFullTask * 2;
-                    if(task.id === 'SL') count = Math.max(1, Math.floor(unitsPerFullTask / 2));
-                }
-
-                if(task.id === 'Brug') {
-                    let h = `<div class="section"><div class="section-title">Rekenen met de brug</div><div style="display:flex; flex-wrap:wrap; gap:15px;">`;
-                    for(let i=0; i<count; i++){
-                        let a=getRandom(6,9), b=getRandom(range/2-2, range/2);
-                        h += `<div class="brug-item"><div class="brug-som">${a} + ${b} = __</div><div class="brug-benen-container"><div class="benen"></div><div class="brug-onder"><div class="mini-invul"></div><div class="mini-invul"></div></div></div></div>`;
-                    }
-                    inhoud.innerHTML += h + `</div></div>`;
-                }
-
-                if(task.id === 'PM') {
-                    let h = `<div class="section"><div class="section-title">Bewerkingen</div><div class="grid">`;
-                    for(let i=0; i<count; i++) {
-                        if(Math.random()>0.5){ let a=getRandom(0, range), b=getRandom(0, range-a); h += `<div class="som-box">${a}+${b}=__</div>`; }
-                        else { let a=getRandom(0, range), b=getRandom(0, a); h += `<div class="som-box">${a}-${b}=__</div>`; }
-                    }
-                    inhoud.innerHTML += h + `</div></div>`;
-                }
-
-                if(task.id === 'Fill') {
-                    let h = `<div class="section"><div class="section-title">Vul de som aan</div><div class="grid">`;
-                    for(let i=0; i<count; i++){
-                        if(Math.random() > 0.5) {
-                            let res=getRandom(5, range), a=getRandom(1, res-1);
-                            h += `<div class="som-box">${a}+__=${res}</div>`;
-                        } else {
-                            if(Math.random() > 0.5) {
-                                let a = getRandom(5, range), res = getRandom(1, a - 1);
-                                h += `<div class="som-box">${a}-__=${res}</div>`;
-                            } else {
-                                let res = getRandom(2, range - 5), b = getRandom(1, 5);
-                                h += `<div class="som-box">__-${b}=${res}</div>`;
-                            }
-                        }
-                    }
-                    inhoud.innerHTML += h + `</div></div>`;
-                }
-
-                if(task.id === 'Splits') {
-                    let h = `<div class="section"><div class="section-title">Splitsen</div><div class="splits-grid">`;
-                    for(let i=0; i<count; i++){
-                        let t=getRandom(2, range), l=getRandom(0, t);
-                        h += `<div class="splits-box"><div class="top-circle">${t}</div><div class="benen"></div><div class="onder-box"><div class="mini-invul">${l}</div><div class="mini-invul"></div></div></div>`;
-                    }
-                    inhoud.innerHTML += h + `</div></div>`;
-                }
-
-                if(task.id === 'SL') {
-                    let h = `<div class="section"><div class="section-title">Rekenslangen</div>`;
-                    for(let s=0; s<count; s++) {
-                        let len = parseInt(document.getElementById('lenSL').value);
-                        let cur = getRandom(1, range/2);
-                        h += `<div class="slang-container"><div class="slang-bol">${cur}</div>`;
-                        for(let i=0; i<len-1; i++){
-                            let op=Math.random()>0.5?'+':'-', v=getRandom(1,Math.floor(range/10)+2);
-                            if(op==='+' && cur+v>range) op='-'; if(op==='-' && cur-v<0) op='+';
-                            cur=(op==='+')?cur+v:cur-v;
-                            h += `<span>(${op}${v})➔</span><div class="slang-bol"></div>`;
-                        }
-                        h += `</div>`;
-                    }
-                    inhoud.innerHTML += h + `</div>`;
-                }
-
-                if(task.id === 'Multi') {
-                    let h = `<div class="section"><div class="section-title">Maaltafels</div><div class="grid">`;
-                    for(let i=0; i<count; i++) {
-                        let a = getRandom(1, 10), b = getRandom(1, 10);
-                        h += `<div class="som-box">${a} x ${b} = __</div>`;
-                    }
-                    inhoud.innerHTML += h + `</div></div>`;
-                }
-            });
-        } 
-        else if(type === 'readwrite') {
-            document.getElementById('wb-titel').innerText = "Lezen & Schrijven";
-            const lvl = document.getElementById('aviLevel').value;
-            const zinnen = [...readData[lvl]].sort(() => 0.5 - Math.random()).slice(0, 8);
-            let h = `<div class="section">`;
-            zinnen.forEach(z => {
-                h += `<div class="lees-zin">${z}</div><div class="schrijf-regel"><div class="lijn dak"></div><div class="lijn plafond"></div><div class="lijn vloer"></div><div class="lijn kelder"></div></div>`;
-            });
-            inhoud.innerHTML += h + `</div>`;
-        }
-        else if(type === 'stories') {
-            document.getElementById('wb-titel').innerText = "Vraagstukken";
-            const range = parseInt(document.getElementById('v-range').value);
-            let h = `<div class="section">`;
-            const stories = [...storyTemplates].sort(() => 0.5 - Math.random()).slice(0, 4);
-            stories.forEach(s => {
-                let x = getRandom(Math.floor(range/2), range), y = getRandom(1, Math.floor(range/2));
-                let tekst = s.q.replace("[X]", x).replace("[Y]", y);
-                h += `<div class="vraagstuk-item"><div class="vraagstuk-tekst">${tekst}</div><div class="vraagstuk-oplossing"><span>Bewerking: ___________________</span> <span>Antwoord: ________</span></div></div>`;
-            });
-            inhoud.innerHTML += h + `</div>`;
-        }
-    }
+/* init */
+buildThemeRow();
+setLeerjaar(leerjaar);
 </script>
 </body>
 </html>

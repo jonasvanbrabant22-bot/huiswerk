@@ -646,9 +646,23 @@ function mm(v) { return v * 3.7795275591; } /* mm naar px */
    Meet de inhoud t.o.v. een A4 en laat oefeningen rij per
    rij aangroeien tot de pagina mooi gevuld is.
    ========================================================= */
-function fillerBox(hPx) {
-  const h = Math.max(70, Math.round(hPx));
-  return `<div class="section tekenvak" style="--sec-color:#94A3B8; height:${h}px;">🎨 Helemaal klaar? Maak hier een mooie tekening!</div>`;
+const fillerPrompts = [
+  "🎨 Maak hier een mooie tekening!",
+  "🖍️ Kleur dit vak helemaal vol met jouw lievelingskleur!",
+  "✏️ Teken hier jouw lievelingsdier!",
+  "🌟 Verzin en teken hier een eigen superheld!",
+  "🚀 Teken hier waar jij naartoe zou willen reizen!"
+];
+function fillerBoxes(gapPx, margin) {
+  const maxH = 420, minH = 70;
+  let remaining = gapPx, out = '', veiligheid = 0;
+  while (remaining > minH && veiligheid++ < 4) {
+    const h = Math.min(maxH, remaining) - margin;
+    if (h < minH) break;
+    out += `<div class="section tekenvak" style="--sec-color:#94A3B8; height:${Math.round(h)}px;">${pick(fillerPrompts)}</div>`;
+    remaining -= (h + margin);
+  }
+  return out;
 }
 
 function fillToPage(tasks, opts = {}) {
@@ -736,7 +750,10 @@ function fillToPage(tasks, opts = {}) {
   }
 
   /* FASE 3 — gaten opvullen: waar een sectie naar de volgende pagina verspringt,
-     komt een tekenvak; en de rest van de laatste pagina wordt ook opgevuld */
+     komt een tekenvak; en de rest van de laatste pagina wordt ook opgevuld.
+     Dezelfde voettekst-toets als in pack(), zodat de voettekst nooit een
+     verweesde, verder lege pagina achterlaat zonder dat de vorige pagina
+     zijn restruimte benut. */
   const kids = [...inhoud.children];
   let page = 1, used = 0;
   for (const el of kids) {
@@ -744,19 +761,25 @@ function fillToPage(tasks, opts = {}) {
     if (used + h > cap(page) && used > 0) {
       const gap = cap(page) - used;
       if (gap > mm(30)) {
-        const f = document.createElement('div');
-        f.className = 'section tekenvak';
-        f.style.cssText = `--sec-color:#94A3B8; height:${Math.round(gap - SEC_MARGIN - 4)}px;`;
-        f.textContent = '🎨 Maak hier een mooie tekening!';
-        inhoud.insertBefore(f, el);
+        const wrap = document.createElement('div');
+        wrap.innerHTML = fillerBoxes(gap, SEC_MARGIN + 4);
+        [...wrap.children].forEach(f => inhoud.insertBefore(f, el));
       }
       page++; used = h;
     } else {
       used += h;
     }
   }
-  const rest = cap(page) - used - footChrome;
-  if (rest > mm(20)) inhoud.insertAdjacentHTML('beforeend', fillerBox(rest - SEC_MARGIN - 4));
+  /* Past de voettekst nog op de laatste inhoudspagina? Zo niet, vul die pagina
+     eerst netjes op (net als pack() hierboven al voorspelde) in plaats van een
+     bijna lege pagina met enkel de voettekst achter te laten. */
+  if (used + footChrome > cap(page)) {
+    const gap = cap(page) - used;
+    if (gap > mm(20)) inhoud.insertAdjacentHTML('beforeend', fillerBoxes(gap, SEC_MARGIN + 4));
+  } else {
+    const rest = cap(page) - used - footChrome;
+    if (rest > mm(20)) inhoud.insertAdjacentHTML('beforeend', fillerBoxes(rest, SEC_MARGIN + 4));
+  }
 
   /* Waarschuwing alleen als we duidelijk onder de gevraagde aantallen moesten gaan */
   const verkleind = tasks.some(t => t.userCount && t.count <= t.userCount - 2 * t.step);
@@ -1083,10 +1106,11 @@ function generate(type) {
       return;
     }
 
-    /* 'Pagina vullend' aangevinkt? Dan groeien enkel die taken. Anders groeit alles mee. */
-    const anyFull = tasks.some(t => t.full);
+    /* Prioriteit ligt bij het ingegeven aantal: een oefening groeit alleen als
+       'Pagina vullend' er expliciet voor is aangevinkt. Is dat voor niets aangevinkt,
+       dan blijft elk aantal exact zoals ingegeven en vult een tekenvak de restruimte. */
     tasks.forEach(t => {
-      t.grow = anyFull ? t.full : true;
+      t.grow = t.full === true;
       t.min = Math.max(t.step, Math.floor(t.count * 0.6)); /* nooit ver onder de gekozen aantallen krimpen */
     });
 
@@ -1098,17 +1122,23 @@ function generate(type) {
     startWerkblad("Lezen & Schrijven");
     const lvl = document.getElementById('aviLevel').value;
     const pool = shuffle(readData[lvl]);
+    const CHUNK = 3; /* per dit aantal zinnen een nieuw, apart afbreekbaar blok */
     const tasks = [{
       gen: n => {
-        let h = sectionOpen("Lees de zin en schrijf ze mooi over ✏️");
-        pool.slice(0, n).forEach(z => {
-          h += `<div class="lees-zin">${z}</div><div class="schrijf-regel"><div class="lijn dak"></div><div class="lijn plafond"></div><div class="lijn vloer"></div><div class="lijn kelder"></div></div>`;
-        });
-        return h + `</div>`;
+        const zinnen = pool.slice(0, n);
+        let out = '';
+        for (let i = 0; i < zinnen.length; i += CHUNK) {
+          let h = sectionOpen("Lees de zin en schrijf ze mooi over ✏️");
+          zinnen.slice(i, i + CHUNK).forEach(z => {
+            h += `<div class="lees-zin">${z}</div><div class="schrijf-regel"><div class="lijn dak"></div><div class="lijn plafond"></div><div class="lijn vloer"></div><div class="lijn kelder"></div></div>`;
+          });
+          out += h + `</div>`;
+        }
+        return out;
       },
       count: Math.min(parseInt(document.getElementById('numZin').value) || 8, pool.length),
       userCount: Math.min(parseInt(document.getElementById('numZin').value) || 8, pool.length),
-      step: 1, max: pool.length, grow: true
+      step: 1, max: pool.length, grow: false, min: 1
     }];
     fillToPage(tasks);
     finishWerkblad(false);
@@ -1125,7 +1155,7 @@ function generate(type) {
       gen: n => genStories(pool.slice(0, n), range),
       count: Math.min(parseInt(document.getElementById('numVraag').value) || 4, pool.length),
       userCount: Math.min(parseInt(document.getElementById('numVraag').value) || 4, pool.length),
-      step: 1, max: pool.length, grow: true
+      step: 1, max: pool.length, grow: false, min: 1
     }];
     fillToPage(tasks);
     finishWerkblad(document.getElementById('checkSleutelV').checked);
@@ -1133,28 +1163,33 @@ function generate(type) {
 }
 
 function genStories(stories, range) {
+  const CHUNK = 3; /* per dit aantal vraagstukken een nieuw, apart afbreekbaar blok */
   const ans = [];
-  let h = sectionOpen("Lees goed en los op 💡", "Onderstreep eerst de getallen in het verhaal.");
-  stories.forEach(s => {
-    let x, y, tekst, uitkomst, bewerking;
-    if (s.op === "+" || s.op === "-") {
-      x = getRandom(Math.floor(range / 2), range); y = getRandom(1, Math.floor(range / 2));
-      uitkomst = s.op === "+" ? x + y : x - y;
-      bewerking = `${x} ${s.op === '+' ? '+' : '−'} ${y} = ${uitkomst}`;
-    } else if (s.op === "x") {
-      x = getRandom(2, 9); y = getRandom(2, 9);
-      uitkomst = x * y; bewerking = `${x} x ${y} = ${uitkomst}`;
-    } else { /* x2 / x8: vast getal in het verhaal */
-      const vast = parseInt(s.op.slice(1));
-      x = getRandom(2, 9); y = vast;
-      uitkomst = x * vast; bewerking = `${x} x ${vast} = ${uitkomst}`;
-    }
-    tekst = s.q.replace("[X]", x).replace("[Y]", y);
-    h += `<div class="vraagstuk-item"><div class="vraagstuk-tekst">${tekst}</div><div class="vraagstuk-oplossing"><span>Bewerking: ___________________</span> <span>Antwoord: ________</span></div></div>`;
-    ans.push(bewerking);
-  });
+  let out = '';
+  for (let c = 0; c < stories.length; c += CHUNK) {
+    let h = sectionOpen("Lees goed en los op 💡", "Onderstreep eerst de getallen in het verhaal.");
+    stories.slice(c, c + CHUNK).forEach(s => {
+      let x, y, tekst, uitkomst, bewerking;
+      if (s.op === "+" || s.op === "-") {
+        x = getRandom(Math.floor(range / 2), range); y = getRandom(1, Math.floor(range / 2));
+        uitkomst = s.op === "+" ? x + y : x - y;
+        bewerking = `${x} ${s.op === '+' ? '+' : '−'} ${y} = ${uitkomst}`;
+      } else if (s.op === "x") {
+        x = getRandom(2, 9); y = getRandom(2, 9);
+        uitkomst = x * y; bewerking = `${x} x ${y} = ${uitkomst}`;
+      } else { /* x2 / x8: vast getal in het verhaal */
+        const vast = parseInt(s.op.slice(1));
+        x = getRandom(2, 9); y = vast;
+        uitkomst = x * vast; bewerking = `${x} x ${vast} = ${uitkomst}`;
+      }
+      tekst = s.q.replace("[X]", x).replace("[Y]", y);
+      h += `<div class="vraagstuk-item"><div class="vraagstuk-tekst">${tekst}</div><div class="vraagstuk-oplossing"><span>Bewerking: ___________________</span> <span>Antwoord: ________</span></div></div>`;
+      ans.push(bewerking);
+    });
+    out += h + `</div>`;
+  }
   addAnswers("Vraagstukken", ans);
-  return h + `</div>`;
+  return out;
 }
 
 /* =========================================================
